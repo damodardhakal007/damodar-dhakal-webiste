@@ -11,10 +11,13 @@ window.onscroll = () => {
     navbar.classList.remove('active');
 }
 
-const typed = new Typed('.multiple-text', {
-    strings: ['Teacher', 'Writer', 'Nepali'],
-    typeSpeed: 80,
-    backSpeed: 80,
-    backDelay: 1200,
-    loop: true,
-});
+const typedTarget = document.querySelector('.multiple-text');
+if (typedTarget) {
+    new Typed(typedTarget, {
+        strings: ['Teacher', 'Writer', 'Nepali'],
+        typeSpeed: 80,
+        backSpeed: 80,
+        backDelay: 1200,
+        loop: true,
+    });
+}
