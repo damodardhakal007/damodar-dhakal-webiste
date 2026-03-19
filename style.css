@@ -347,6 +347,19 @@ span {
     color: var(--main-color);
 }
 
+.contact .contact-text {
+    font-size: 1.6rem;
+    color: var(--text-color);
+    max-width: 70rem;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
+}
+
+.contact .contact-text a {
+    color: var(--main-color);
+    text-decoration: underline;
+}
+
 .contact form {
     max-width: 80rem;
     margin: 1rem auto;
