@@ -208,6 +208,15 @@ span {
     font-size: 6rem;
 }
 
+.heading a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.heading a:hover {
+    color: var(--main-color);
+}
+
 .about-content {
     padding: 0 4rem;
 }
@@ -222,6 +231,80 @@ span {
 }
 
 .about-content p {
+    font-size: 1.6rem;
+    margin: 2rem 0 3rem;
+}
+
+/* School Section */
+
+.school {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    background: var(--bg-color);
+}
+
+.school-img img {
+    width: 25vw;
+    border: 2px solid var(--main-color);
+    border-radius: 50%;
+    box-shadow: 0 0 25px var(--main-color);
+    cursor: pointer;
+    transition: 0.4s ease-in-out;
+}
+
+.school-img img:hover {
+    box-shadow: 0 0 25px var(--main-color), 0 0 35px var(--main-color), 0 0 55px var(--main-color);
+}
+
+.school-content {
+    padding: 0 4rem;
+}
+
+.school-content h2 {
+    text-align: left;
+    line-height: 1.2;
+}
+
+.school-content p {
+    font-size: 1.6rem;
+    margin: 2rem 0 3rem;
+}
+
+/* School Info Section */
+
+.school-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    background: var(--snd-bg-color);
+}
+
+.school-info-img img {
+    width: 25vw;
+    border: 2px solid var(--main-color);
+    border-radius: 50%;
+    box-shadow: 0 0 25px var(--main-color);
+    cursor: pointer;
+    transition: 0.4s ease-in-out;
+}
+
+.school-info-img img:hover {
+    box-shadow: 0 0 25px var(--main-color), 0 0 35px var(--main-color), 0 0 55px var(--main-color);
+}
+
+.school-info-content {
+    padding: 0 4rem;
+}
+
+.school-info-content h2 {
+    text-align: left;
+    line-height: 1.2;
+}
+
+.school-info-content p {
     font-size: 1.6rem;
     margin: 2rem 0 3rem;
 }
