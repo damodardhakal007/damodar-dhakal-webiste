@@ -5,194 +5,432 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="style.css">
-    <title>Kavresthali Secondary School</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Kavresthali Secondary School - Since 2019 B.S.</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        :root{--primary:#1B5E20;--primary-light:#4CAF50;--primary-dark:#0D3B0F;--accent:#FF6F00;--accent-light:#FFA000;--blue:#1565C0;--white:#ffffff;--light-bg:#F1F8E9;--gray:#f5f5f5;--text:#2E2E2E;--text-light:#666;--shadow:0 4px 20px rgba(0,0,0,0.08);--shadow-lg:0 10px 40px rgba(0,0,0,0.12);}
+        html{scroll-behavior:smooth;font-size:62.5%;}
+        body{font-family:'Poppins',sans-serif;font-size:1.6rem;color:var(--text);background:var(--white);line-height:1.6;}
+
+        /* NAVBAR */
+        .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--white);box-shadow:0 2px 10px rgba(0,0,0,0.08);padding:1rem 5%;display:flex;align-items:center;justify-content:space-between;transition:all 0.3s;}
+        .navbar.scrolled{padding:0.6rem 5%;box-shadow:0 2px 20px rgba(0,0,0,0.12);}
+        .nav-brand{display:flex;align-items:center;gap:1.2rem;text-decoration:none;}
+        .nav-brand .logo-circle{width:48px;height:48px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;}
+        .nav-brand .brand-text{line-height:1.2;}
+        .nav-brand .brand-text h2{font-size:1.6rem;color:var(--primary);font-weight:700;}
+        .nav-brand .brand-text small{font-size:1.1rem;color:var(--text-light);}
+        .nav-links{display:flex;align-items:center;gap:2.5rem;list-style:none;}
+        .nav-links a{text-decoration:none;color:var(--text);font-size:1.4rem;font-weight:500;padding:0.5rem 0;position:relative;transition:color 0.3s;}
+        .nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--primary);transition:width 0.3s;}
+        .nav-links a:hover{color:var(--primary);}
+        .nav-links a:hover::after{width:100%;}
+        .nav-links .admin-btn{background:var(--primary);color:white!important;padding:0.8rem 1.8rem;border-radius:5rem;font-size:1.3rem;font-weight:600;}
+        .nav-links .admin-btn::after{display:none;}
+        .nav-links .admin-btn:hover{background:var(--primary-dark);transform:translateY(-1px);}
+        .mobile-toggle{display:none;background:none;border:none;font-size:2.6rem;color:var(--primary);cursor:pointer;}
+
+        /* HERO */
+        .hero{padding:12rem 5% 6rem;background:linear-gradient(135deg,var(--light-bg) 0%,#E8F5E9 50%,#C8E6C9 100%);position:relative;overflow:hidden;}
+        .hero::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;border-radius:50%;background:rgba(27,94,32,0.05);}
+        .hero::after{content:'';position:absolute;bottom:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:rgba(255,111,0,0.05);}
+        .hero-content{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;z-index:1;}
+        .hero-text .badge{display:inline-flex;align-items:center;gap:0.8rem;background:var(--white);padding:0.8rem 1.6rem;border-radius:5rem;font-size:1.3rem;color:var(--primary);font-weight:500;box-shadow:var(--shadow);margin-bottom:2rem;}
+        .hero-text h1{font-size:4.5rem;font-weight:800;color:var(--primary-dark);line-height:1.2;margin-bottom:1.5rem;}
+        .hero-text h1 span{color:var(--accent);}
+        .hero-text .motto{font-size:1.8rem;color:var(--text-light);font-style:italic;margin-bottom:1rem;border-left:3px solid var(--accent);padding-left:1.5rem;}
+        .hero-text p{font-size:1.6rem;color:var(--text-light);margin-bottom:3rem;max-width:50rem;}
+        .hero-btns{display:flex;gap:1.5rem;flex-wrap:wrap;}
+        .btn-primary{padding:1.4rem 3rem;background:var(--primary);color:white;border:none;border-radius:0.8rem;font-size:1.5rem;font-weight:600;text-decoration:none;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:0.8rem;}
+        .btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+        .btn-outline{padding:1.4rem 3rem;background:transparent;color:var(--primary);border:2px solid var(--primary);border-radius:0.8rem;font-size:1.5rem;font-weight:600;text-decoration:none;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:0.8rem;}
+        .btn-outline:hover{background:var(--primary);color:white;}
+        .hero-card{background:var(--white);border-radius:2rem;padding:3rem;box-shadow:var(--shadow-lg);}
+        .hero-card h3{font-size:1.8rem;color:var(--primary);margin-bottom:2rem;display:flex;align-items:center;gap:0.8rem;}
+        .hero-card .update-item{padding:1.2rem 0;border-bottom:1px solid #E8F5E9;display:flex;align-items:flex-start;gap:1rem;}
+        .hero-card .update-item:last-child{border:none;}
+        .hero-card .update-icon{font-size:2rem;flex-shrink:0;}
+        .hero-card .update-text{font-size:1.4rem;color:var(--text);font-weight:500;}
+        .hero-card .update-date{font-size:1.2rem;color:var(--text-light);margin-top:0.3rem;}
+
+        /* STATS */
+        .stats-bar{background:var(--primary);padding:3rem 5%;display:flex;justify-content:center;gap:5rem;flex-wrap:wrap;}
+        .stat-item{text-align:center;color:white;}
+        .stat-item .num{font-size:3.5rem;font-weight:800;}
+        .stat-item .label{font-size:1.3rem;opacity:0.85;margin-top:0.3rem;}
+
+        /* SECTIONS */
+        .section{padding:8rem 5%;}
+        .section-alt{background:var(--gray);}
+        .section-green{background:var(--light-bg);}
+        .section-header{text-align:center;margin-bottom:5rem;}
+        .section-header .overline{font-size:1.3rem;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem;}
+        .section-header h2{font-size:3.5rem;font-weight:700;color:var(--primary-dark);}
+        .section-header p{font-size:1.6rem;color:var(--text-light);max-width:60rem;margin:1.5rem auto 0;}
+
+        /* ABOUT */
+        .about-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;}
+        .about-img{background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:2rem;height:350px;display:flex;align-items:center;justify-content:center;font-size:8rem;color:rgba(255,255,255,0.3);position:relative;overflow:hidden;}
+        .about-img::after{content:'🏫';position:absolute;font-size:10rem;opacity:0.4;}
+        .about-text h3{font-size:2.4rem;color:var(--primary-dark);margin-bottom:1.5rem;}
+        .about-text p{font-size:1.5rem;color:var(--text-light);margin-bottom:1.5rem;}
+        .about-info{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem;}
+        .about-info-item{display:flex;align-items:center;gap:1rem;}
+        .about-info-item .icon{width:40px;height:40px;background:var(--light-bg);border-radius:0.8rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem;}
+        .about-info-item .text{font-size:1.3rem;}
+        .about-info-item .text strong{display:block;color:var(--text);}
+        .about-info-item .text span{color:var(--text-light);}
+
+        /* FEATURES */
+        .features-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2.5rem;}
+        .feature-card{background:var(--white);border-radius:1.5rem;padding:3rem 2.5rem;box-shadow:var(--shadow);transition:all 0.3s;border:1px solid #E8F5E9;}
+        .feature-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:var(--primary-light);}
+        .feature-card .icon{width:60px;height:60px;border-radius:1.2rem;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin-bottom:2rem;}
+        .feature-card .icon.green{background:#E8F5E9;}
+        .feature-card .icon.blue{background:#E3F2FD;}
+        .feature-card .icon.orange{background:#FFF3E0;}
+        .feature-card .icon.purple{background:#F3E5F5;}
+        .feature-card h3{font-size:1.8rem;color:var(--text);margin-bottom:1rem;}
+        .feature-card p{font-size:1.4rem;color:var(--text-light);}
+
+        /* TEACHERS */
+        .teachers-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:2.5rem;}
+        .teacher-card{background:var(--white);border-radius:1.5rem;padding:2.5rem;text-align:center;box-shadow:var(--shadow);transition:all 0.3s;border:1px solid transparent;}
+        .teacher-card:hover{border-color:var(--primary-light);transform:translateY(-3px);}
+        .teacher-card .avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:700;color:white;}
+        .teacher-card .name{font-size:1.6rem;font-weight:600;color:var(--text);margin-bottom:0.5rem;}
+        .teacher-card .subject{font-size:1.3rem;color:var(--primary);font-weight:500;margin-bottom:0.5rem;}
+        .teacher-card .qual{font-size:1.2rem;color:var(--text-light);margin-bottom:1rem;}
+        .teacher-card .exp-badge{display:inline-block;padding:0.4rem 1.2rem;background:var(--light-bg);border-radius:5rem;font-size:1.1rem;color:var(--primary);font-weight:500;}
+
+        /* NOTICES */
+        .notices-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;}
+        .notice-card{background:var(--white);border-radius:1.2rem;padding:2.5rem;box-shadow:var(--shadow);border-left:4px solid var(--primary);transition:all 0.3s;}
+        .notice-card:hover{transform:translateX(5px);}
+        .notice-card.blue{border-left-color:var(--blue);}
+        .notice-card.red{border-left-color:#D32F2F;}
+        .notice-card .tag{font-size:1.2rem;font-weight:600;color:var(--primary);margin-bottom:0.8rem;}
+        .notice-card.blue .tag{color:var(--blue);}
+        .notice-card.red .tag{color:#D32F2F;}
+        .notice-card h3{font-size:1.6rem;color:var(--text);margin-bottom:0.8rem;}
+        .notice-card p{font-size:1.3rem;color:var(--text-light);margin-bottom:1rem;}
+        .notice-card .date{font-size:1.2rem;color:var(--text-light);display:flex;align-items:center;gap:0.5rem;}
+
+        /* GALLERY */
+        .gallery-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:2rem;}
+        .gallery-card{border-radius:1.5rem;padding:3rem 2rem;text-align:center;color:white;transition:all 0.3s;cursor:pointer;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+        .gallery-card:hover{transform:scale(1.05);}
+        .gallery-card .g-icon{font-size:4rem;margin-bottom:1rem;}
+        .gallery-card .g-label{font-size:1.4rem;font-weight:600;}
+
+        /* CONTACT */
+        .contact-wrapper{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;}
+        .contact-info-list{display:flex;flex-direction:column;gap:2rem;}
+        .contact-item{display:flex;align-items:flex-start;gap:1.5rem;background:var(--white);padding:2rem;border-radius:1.2rem;box-shadow:var(--shadow);}
+        .contact-item .c-icon{width:48px;height:48px;background:var(--light-bg);border-radius:1rem;display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;}
+        .contact-item .info .c-label{font-size:1.2rem;color:var(--text-light);margin-bottom:0.3rem;}
+        .contact-item .info .c-value{font-size:1.5rem;color:var(--text);font-weight:500;}
+        .contact-form{background:var(--white);padding:3rem;border-radius:1.5rem;box-shadow:var(--shadow);}
+        .contact-form h3{font-size:2rem;color:var(--primary-dark);margin-bottom:2rem;}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
+        .form-group{margin-bottom:1.5rem;}
+        .form-group label{display:block;font-size:1.3rem;color:var(--text);font-weight:500;margin-bottom:0.6rem;}
+        .form-group input,.form-group select,.form-group textarea{width:100%;padding:1.2rem 1.5rem;border:1.5px solid #E0E0E0;border-radius:0.8rem;font-size:1.4rem;font-family:inherit;outline:none;transition:border-color 0.3s;}
+        .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary);}
+        .form-group textarea{min-height:120px;resize:vertical;}
+        .form-submit{width:100%;padding:1.4rem;background:var(--primary);color:white;border:none;border-radius:0.8rem;font-size:1.5rem;font-weight:600;cursor:pointer;transition:all 0.3s;}
+        .form-submit:hover{background:var(--primary-dark);}
+        #form-success{display:none;text-align:center;padding:4rem 2rem;}
+
+        /* CTA */
+        .cta-section{background:linear-gradient(135deg,var(--primary-dark),var(--primary));padding:6rem 5%;text-align:center;color:white;}
+        .cta-section h2{font-size:3rem;margin-bottom:1.5rem;}
+        .cta-section p{font-size:1.6rem;opacity:0.9;max-width:60rem;margin:0 auto 3rem;}
+        .cta-buttons{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;}
+        .cta-btn{padding:1.3rem 2.5rem;border-radius:0.8rem;font-size:1.4rem;font-weight:600;text-decoration:none;transition:all 0.3s;display:inline-flex;align-items:center;gap:0.8rem;}
+        .cta-btn.white{background:white;color:var(--primary);}
+        .cta-btn.white:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.2);}
+        .cta-btn.outline{background:transparent;color:white;border:2px solid rgba(255,255,255,0.5);}
+        .cta-btn.outline:hover{border-color:white;background:rgba(255,255,255,0.1);}
+
+        /* FOOTER */
+        .footer{background:#1a1a2e;color:#ccc;padding:5rem 5% 3rem;}
+        .footer-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4rem;margin-bottom:4rem;}
+        .footer-col h4{color:white;font-size:1.6rem;margin-bottom:1.5rem;}
+        .footer-col p{font-size:1.3rem;line-height:1.8;}
+        .footer-col ul{list-style:none;}
+        .footer-col ul li{margin-bottom:1rem;}
+        .footer-col ul li a{color:#ccc;text-decoration:none;font-size:1.3rem;transition:color 0.3s;}
+        .footer-col ul li a:hover{color:var(--primary-light);}
+        .footer-bottom{border-top:1px solid rgba(255,255,255,0.1);padding-top:2.5rem;text-align:center;font-size:1.3rem;}
+        .footer-bottom .motto{font-style:italic;margin-top:0.8rem;color:#999;font-size:1.2rem;}
+        .footer-socials{display:flex;justify-content:center;gap:1.5rem;margin-bottom:1.5rem;}
+        .footer-socials a{width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#ccc;text-decoration:none;font-size:1.8rem;transition:all 0.3s;}
+        .footer-socials a:hover{background:var(--primary);color:white;}
+
+        /* RESPONSIVE */
+        @media(max-width:992px){
+            .hero-content{grid-template-columns:1fr;}
+            .hero-text h1{font-size:3.5rem;}
+            .about-grid{grid-template-columns:1fr;}
+            .contact-wrapper{grid-template-columns:1fr;}
+            .footer-grid{grid-template-columns:1fr 1fr;}
+        }
+        @media(max-width:768px){
+            html{font-size:55%;}
+            .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:white;flex-direction:column;padding:2rem;box-shadow:var(--shadow-lg);gap:1.5rem;}
+            .nav-links.active{display:flex;}
+            .mobile-toggle{display:block;}
+            .hero{padding:10rem 5% 4rem;}
+            .hero-text h1{font-size:3rem;}
+            .stats-bar{gap:3rem;}
+            .form-row{grid-template-columns:1fr;}
+            .footer-grid{grid-template-columns:1fr;gap:3rem;}
+            .about-info{grid-template-columns:1fr;}
+        }
+        @media(max-width:480px){
+            .hero-text h1{font-size:2.6rem;}
+            .hero-btns{flex-direction:column;}
+            .section{padding:5rem 5%;}
+        }
+    </style>
 </head>
 
 <body>
-    <!-- HEADER SECTION -->
-    <header class="header">
-        <a href="index.html" class="logo">Shukdev dhakal</a>
-
-        <i class='bx bx-menu' id="menu-icon"></i>
-
-        <nav class="navbar">
-            <a href="index.html#home">Home</a>
-            <a href="about.html">About</a>
-            <a href="kavresthali_school_website.html">School</a>
-            <a href="privacy-policy.html">Privacy Policy</a>
-            <a href="privacy-policy-daure.html">Privacy Policy - Daure</a>
-            <a href="contact-me.html">Contact Me</a>
-            <a href="school-login.html" style="color:#007F73;">🎓 Portal</a>
-            <a href="school-admin-login.html" style="color:#007F73;">🔐 Admin</a>
-        </nav>
-    </header>
-
-    <!-- HERO Section -->
-    <section class="school-hero">
-        <div class="school-hero-text">
-            <div class="school-hero-badge">🎓 Tarakeshwor Municipality, Kathmandu</div>
-            <h1>जननी जन्मभूमिश्च<br><span>स्वर्गादपि गरीयसी</span></h1>
-            <p id="hero-description">Mother and Motherland are Greater than Heaven. Since 2019 B.S., Kavresthali Secondary School has been a pillar of quality public education in Kathmandu.</p>
-            <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
-                <a href="#contact" class="btn">Get in Touch</a>
-                <a href="#about-school" class="btn" style="background:transparent;border:2px solid var(--main-color);color:var(--main-color);">Our Story</a>
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-brand">
+            <div class="logo-circle">🎓</div>
+            <div class="brand-text">
+                <h2>Kavresthali Secondary School</h2>
+                <small>Est. 2019 B.S. · Tarakeshwor, Kathmandu</small>
             </div>
-            <div class="school-stats" id="hero-stats">
-                <div class="stat"><div class="stat-num">644+</div><div class="stat-label">Students Enrolled</div></div>
-                <div class="stat"><div class="stat-num">ECD–12</div><div class="stat-label">Grades Offered</div></div>
-                <div class="stat"><div class="stat-num">70+</div><div class="stat-label">Years of Service</div></div>
+        </a>
+        <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+            <i class='bx bx-menu'></i>
+        </button>
+        <ul class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about-school">About</a>
+            <a href="#academics">Academics</a>
+            <a href="#teachers">Faculty</a>
+            <a href="#notices">Notices</a>
+            <a href="#contact">Contact</a>
+            <a href="school-login.html">🎓 Portal</a>
+            <a href="school-admin-login.html" class="admin-btn">🔐 Admin</a>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-text">
+                <div class="badge">📍 Tarakeshwor Municipality-2, Kathmandu</div>
+                <h1>Empowering <span>Future</span> Leaders Since 2019 B.S.</h1>
+                <div class="motto">जननी जन्मभूमिश्च स्वर्गादपि गरीयसी</div>
+                <p id="hero-description">Mother and Motherland are Greater than Heaven. For over 70 years, Kavresthali Secondary School has been nurturing young minds with quality public education.</p>
+                <div class="hero-btns">
+                    <a href="#contact" class="btn-primary">📞 Contact Us</a>
+                    <a href="#about-school" class="btn-outline">📖 Our Story</a>
+                </div>
             </div>
-        </div>
-        <div class="school-info-card" id="latest-updates">
-            <h3>📢 Latest Updates</h3>
-            <p style="font-size:1.4rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(0,127,115,0.15);">🏅 Annual Sports Day — June 15, 2082 B.S.<br><small style="color:#999;">2 hours ago</small></p>
-            <p style="font-size:1.4rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(0,127,115,0.15);">📊 Grade 10 SEE results published<br><small style="color:#999;">Yesterday</small></p>
-            <p style="font-size:1.4rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(0,127,115,0.15);">👨‍👩‍👧 Parent-Teacher Meeting — June 20<br><small style="color:#999;">3 days ago</small></p>
-            <p style="font-size:1.4rem;margin-bottom:0;">💰 Fee payment deadline: Ashadh 15<br><small style="color:#999;">5 days ago</small></p>
+            <div class="hero-card" id="latest-updates">
+                <h3>📢 Latest Updates</h3>
+                <div class="update-item"><div class="update-icon">🏅</div><div><div class="update-text">Annual Sports Day — June 15, 2082 B.S.</div><div class="update-date">2 hours ago</div></div></div>
+                <div class="update-item"><div class="update-icon">📊</div><div><div class="update-text">Grade 10 SEE results published</div><div class="update-date">Yesterday</div></div></div>
+                <div class="update-item"><div class="update-icon">👨‍👩‍👧</div><div><div class="update-text">Parent-Teacher Meeting — June 20</div><div class="update-date">3 days ago</div></div></div>
+                <div class="update-item"><div class="update-icon">💰</div><div><div class="update-text">Fee payment deadline: Ashadh 15</div><div class="update-date">5 days ago</div></div></div>
+            </div>
         </div>
     </section>
 
-    <!-- ABOUT Section -->
-    <section id="about-school" class="content-section">
-        <h2 class="heading">About <span>Our School</span></h2>
-        <h3>A Legacy of Public Excellence</h3>
-        <p id="about-description">Founded in 2019 B.S. by Mr. Tirtha Prasad Dhakal, Kavresthali Secondary School is a government public school located in Tarakeshwor Municipality-2, Kavresthali, Kathmandu. Affiliated with the Nepal Government, we offer education from ECD through Grade 12.</p>
-        <p>Under Headmaster Prahlad Pokhrel and Director Mr. Shukdev Dhakal, our school continues to shape the next generation with dedication and integrity.</p>
-        <div class="pillars-grid">
-            <div class="pillar-card"><div class="pillar-title">📖 Academics</div><div class="pillar-desc">Rigorous curriculum from ECD to Grade 12.</div></div>
-            <div class="pillar-card"><div class="pillar-title">🏆 Achievement</div><div class="pillar-desc">Consistently strong SEE results year after year.</div></div>
-            <div class="pillar-card"><div class="pillar-title">⚽ Extracurricular</div><div class="pillar-desc">Sports, arts, science club, and cultural programs.</div></div>
-            <div class="pillar-card"><div class="pillar-title">🛡️ Safety</div><div class="pillar-desc">GPS bus tracking and real-time campus alerts.</div></div>
+    <!-- STATS -->
+    <div class="stats-bar" id="hero-stats">
+        <div class="stat-item"><div class="num">644+</div><div class="label">Students Enrolled</div></div>
+        <div class="stat-item"><div class="num">ECD–12</div><div class="label">Grades Offered</div></div>
+        <div class="stat-item"><div class="num">70+</div><div class="label">Years of Service</div></div>
+        <div class="stat-item"><div class="num">30+</div><div class="label">Expert Teachers</div></div>
+    </div>
+
+    <!-- ABOUT -->
+    <section class="section" id="about-school">
+        <div class="section-header">
+            <div class="overline">About Us</div>
+            <h2>A Legacy of Public Excellence</h2>
+            <p>Building the foundation of tomorrow's Nepal, one student at a time.</p>
         </div>
-        <div class="school-info-card" style="margin-top:3rem;min-width:auto;" id="school-info-card">
-            <h3>School Information</h3>
-            <div class="info-row-item"><span class="info-key">Founded</span><span class="info-val" id="info-founded">2019 B.S.</span></div>
-            <div class="info-row-item"><span class="info-key">Founder</span><span class="info-val" id="info-founder">T.P. Dhakal</span></div>
-            <div class="info-row-item"><span class="info-key">Type</span><span class="info-val" id="info-type">Public</span></div>
-            <div class="info-row-item"><span class="info-key">Grades</span><span class="info-val" id="info-grades">ECD – 12</span></div>
-            <div class="info-row-item"><span class="info-key">Students</span><span class="info-val" id="info-students">644+</span></div>
-            <div class="info-row-item"><span class="info-key">Headmaster</span><span class="info-val" id="info-headmaster">P. Pokhrel</span></div>
-            <div class="info-row-item"><span class="info-key">Director</span><span class="info-val" id="info-director">S. Dhakal</span></div>
-            <div class="info-row-item"><span class="info-key">Ward</span><span class="info-val" id="info-ward">Tarakeshwor-2</span></div>
-            <div class="info-row-item"><span class="info-key">Affiliation</span><span class="info-val" id="info-affiliation">Nepal Gov.</span></div>
+        <div class="about-grid">
+            <div class="about-img"></div>
+            <div class="about-text">
+                <h3>70+ Years of Quality Education</h3>
+                <p id="about-description">Founded in 2019 B.S. by Mr. Tirtha Prasad Dhakal, Kavresthali Secondary School is a government public school located in Tarakeshwor Municipality-2, Kavresthali, Kathmandu. Affiliated with the Nepal Government, we offer education from ECD through Grade 12.</p>
+                <p>Under Headmaster Prahlad Pokhrel and Director Mr. Shukdev Dhakal, our school continues to shape the next generation with dedication and integrity.</p>
+                <div class="about-info">
+                    <div class="about-info-item"><div class="icon">📅</div><div class="text"><strong id="info-founded">2019 B.S.</strong><span>Founded</span></div></div>
+                    <div class="about-info-item"><div class="icon">🏛️</div><div class="text"><strong id="info-type">Public</strong><span>School Type</span></div></div>
+                    <div class="about-info-item"><div class="icon">📚</div><div class="text"><strong id="info-grades">ECD – 12</strong><span>Grades</span></div></div>
+                    <div class="about-info-item"><div class="icon">👨‍🎓</div><div class="text"><strong id="info-students">644+</strong><span>Students</span></div></div>
+                    <div class="about-info-item"><div class="icon">👤</div><div class="text"><strong id="info-headmaster">P. Pokhrel</strong><span>Headmaster</span></div></div>
+                    <div class="about-info-item"><div class="icon">🎯</div><div class="text"><strong id="info-director">S. Dhakal</strong><span>Director</span></div></div>
+                    <div class="about-info-item"><div class="icon">📍</div><div class="text"><strong id="info-ward">Tarakeshwor-2</strong><span>Location</span></div></div>
+                    <div class="about-info-item"><div class="icon">🇳🇵</div><div class="text"><strong id="info-affiliation">Nepal Gov.</strong><span>Affiliation</span></div></div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- FEATURES Section -->
-    <section class="content-section alt-bg">
-        <h2 class="heading">School <span>Mobile App</span></h2>
-        <h3>Everything Connected, In Your Pocket</h3>
-        <p>Our app bridges parents, students, teachers, and administration — available on iOS and Android.</p>
+    <!-- ACADEMICS -->
+    <section class="section section-alt" id="academics">
+        <div class="section-header">
+            <div class="overline">What We Offer</div>
+            <h2>Academic Excellence</h2>
+            <p>Comprehensive education with modern facilities and dedicated faculty.</p>
+        </div>
         <div class="features-grid">
-            <div class="feature-card"><div class="feat-icon">🚌</div><h3>Live Bus Tracking</h3><p>Real-time GPS bus location with ETAs for parents.</p></div>
-            <div class="feature-card"><div class="feat-icon">📚</div><h3>Academic Dashboard</h3><p>Timetables, homework, syllabus, and exam results.</p></div>
-            <div class="feature-card"><div class="feat-icon">✅</div><h3>Attendance Alerts</h3><p>Instant notification when your child arrives or departs.</p></div>
-            <div class="feature-card"><div class="feat-icon">🔔</div><h3>Emergency Alerts</h3><p>Priority push notifications for urgent announcements.</p></div>
-            <div class="feature-card"><div class="feat-icon">💬</div><h3>Parent-Teacher Chat</h3><p>Secure direct messaging with assigned teachers.</p></div>
-            <div class="feature-card"><div class="feat-icon">🗓️</div><h3>Calendar Sync</h3><p>Export school events to Google or Apple Calendar.</p></div>
+            <div class="feature-card"><div class="icon green">📖</div><h3>Strong Academics</h3><p>Rigorous curriculum from ECD to Grade 12 with experienced teachers and regular assessments.</p></div>
+            <div class="feature-card"><div class="icon blue">🔬</div><h3>Science & Computer Labs</h3><p>Well-equipped labs for hands-on experiments and computer training for digital literacy.</p></div>
+            <div class="feature-card"><div class="icon orange">⚽</div><h3>Sports & Activities</h3><p>Inter-house sports competitions, annual sports day, and physical education programs.</p></div>
+            <div class="feature-card"><div class="icon purple">🎭</div><h3>Cultural Programs</h3><p>Regular cultural events, festivals celebration, and art/music programs for holistic development.</p></div>
+            <div class="feature-card"><div class="icon green">📱</div><h3>School App</h3><p>Digital platform connecting parents, students, and teachers with real-time updates.</p></div>
+            <div class="feature-card"><div class="icon blue">🛡️</div><h3>Safe Environment</h3><p>Campus security, GPS bus tracking, and real-time alerts for student safety.</p></div>
         </div>
     </section>
 
-    <!-- STUDENT PROFILE Section -->
-    <section id="students" class="content-section">
-        <h2 class="heading">Student <span>Profiles</span></h2>
-        <h3>Interactive Student Dashboard</h3>
-        <p>Digital ID, academic radar, achievement wall — all through the school app.</p>
-        <div id="student-profiles-container">
-            <!-- Dynamically loaded -->
+    <!-- TEACHERS -->
+    <section class="section" id="teachers">
+        <div class="section-header">
+            <div class="overline">Our Team</div>
+            <h2>Meet Our Faculty</h2>
+            <p>Experienced, passionate educators committed to nurturing every student's potential.</p>
         </div>
+        <div class="teachers-grid" id="teachers-grid"></div>
     </section>
 
-    <!-- TEACHERS Section -->
-    <section id="teachers" class="content-section alt-bg">
-        <h2 class="heading">Our <span>Faculty</span></h2>
-        <h3>Meet Our Dedicated Teachers</h3>
-        <p>Experienced, passionate educators committed to nurturing every student's full potential.</p>
-        <div class="teachers-grid" id="teachers-grid">
-            <!-- Dynamically loaded -->
+    <!-- STUDENTS -->
+    <section class="section section-green" id="students">
+        <div class="section-header">
+            <div class="overline">Our Students</div>
+            <h2>Student Profiles</h2>
+            <p>Interactive digital student dashboard — academic records, achievements, and more.</p>
         </div>
+        <div id="student-profiles-container" style="max-width:1000px;margin:0 auto;"></div>
     </section>
 
-    <!-- NOTICES Section -->
-    <section id="notices" class="content-section">
-        <h2 class="heading">School <span>Notices</span></h2>
-        <h3>Latest Announcements</h3>
-        <div class="notices-grid" id="notices-grid">
-            <!-- Dynamically loaded -->
+    <!-- NOTICES -->
+    <section class="section section-alt" id="notices">
+        <div class="section-header">
+            <div class="overline">Stay Informed</div>
+            <h2>School Notices</h2>
+            <p>Latest announcements and important dates.</p>
         </div>
+        <div class="notices-grid" id="notices-grid"></div>
     </section>
 
-    <!-- GALLERY Section -->
-    <section id="gallery" class="content-section alt-bg">
-        <h2 class="heading">Campus <span>Gallery</span></h2>
-        <h3>School Life</h3>
-        <p>Glimpses of learning, celebration, and growth at Kavresthali Secondary School.</p>
-        <div class="school-gallery-grid" id="gallery-grid">
-            <!-- Dynamically loaded -->
+    <!-- GALLERY -->
+    <section class="section" id="gallery">
+        <div class="section-header">
+            <div class="overline">Campus Life</div>
+            <h2>School Gallery</h2>
+            <p>Glimpses of learning, celebration, and growth at Kavresthali Secondary School.</p>
         </div>
+        <div class="gallery-grid" id="gallery-grid"></div>
     </section>
 
-    <!-- CONTACT Section -->
-    <section id="contact" class="content-section">
-        <h2 class="heading">Contact <span>Us</span></h2>
-        <h3>Get in Touch</h3>
-        <div class="school-contact-inner">
-            <div class="school-contact-info" id="contact-info-container">
-                <!-- Dynamically loaded -->
-            </div>
-            <div class="school-contact-form">
+    <!-- CONTACT -->
+    <section class="section section-green" id="contact">
+        <div class="section-header">
+            <div class="overline">Get In Touch</div>
+            <h2>Contact Us</h2>
+            <p>We'd love to hear from you. Reach out for admissions, inquiries, or any support.</p>
+        </div>
+        <div class="contact-wrapper">
+            <div class="contact-info-list" id="contact-info-container"></div>
+            <div class="contact-form">
+                <h3>Send a Message</h3>
                 <div id="form-fields">
                     <div class="form-row">
                         <div class="form-group"><label>Full Name</label><input type="text" placeholder="Your full name"></div>
-                        <div class="form-group"><label>Phone Number</label><input type="text" placeholder="+977-XXXXXXXXXX"></div>
+                        <div class="form-group"><label>Phone</label><input type="text" placeholder="+977-XXXXXXXXXX"></div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Email Address</label><input type="email" placeholder="your@email.com"></div>
-                        <div class="form-group"><label>Subject</label>
-                            <select><option>Admission Inquiry</option><option>Fee Information</option><option>App Support</option><option>Parent-Teacher Meeting</option><option>General Inquiry</option></select>
-                        </div>
-                    </div>
-                    <div class="form-row"><div class="form-group full"><label>Message</label><textarea placeholder="Type your message here..."></textarea></div></div>
+                    <div class="form-group"><label>Email Address</label><input type="email" placeholder="your@email.com"></div>
+                    <div class="form-group"><label>Subject</label><select><option>Admission Inquiry</option><option>Fee Information</option><option>Parent-Teacher Meeting</option><option>General Inquiry</option></select></div>
+                    <div class="form-group"><label>Message</label><textarea placeholder="Type your message here..."></textarea></div>
                     <button class="form-submit" onclick="submitForm()">Send Message →</button>
                 </div>
                 <div id="form-success">
-                    <div class="tick">✅</div>
-                    <h3 style="color:var(--main-color);font-size:2rem;margin-bottom:0.5rem;">Message Sent!</h3>
-                    <p style="font-size:1.5rem;color:#666;">Thank you. Our office will respond within 1–2 working days.</p>
+                    <div style="font-size:5rem;margin-bottom:1rem;">✅</div>
+                    <h3 style="color:var(--primary);font-size:2rem;margin-bottom:0.8rem;">Message Sent!</h3>
+                    <p style="color:var(--text-light);font-size:1.5rem;">Thank you! We'll respond within 1-2 working days.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
+    <!-- CTA -->
     <section class="cta-section">
         <h2>Download the School App</h2>
-        <p>Real-time updates, bus tracking, homework tracking, exam results, and parent-teacher communication — all in your pocket.</p>
+        <p>Real-time updates, bus tracking, homework, exam results, and parent-teacher communication — all in your pocket.</p>
         <div class="cta-buttons">
-            <a href="#" class="btn-white">📱 App Store</a>
-            <a href="#" class="btn-white">🤖 Google Play</a>
-            <a href="#contact" class="btn-outline-white">📞 Contact School</a>
+            <a href="#" class="cta-btn white">📱 App Store</a>
+            <a href="#" class="cta-btn white">🤖 Google Play</a>
+            <a href="#contact" class="cta-btn outline">📞 Contact School</a>
         </div>
     </section>
 
-    <!-- Footer Section -->
+    <!-- FOOTER -->
     <footer class="footer">
-        <div class="social">
-            <a href="https://www.facebook.com/shukdev.dhakal.3" target="_blank"><i class='bx bxl-facebook'></i></a>
-            <a href="https://instagram.com/shukdevdhakal007" target="_blank"><i class='bx bxl-instagram'></i></a>
-            <a href="https://play.google.com/store/apps/details?id=com.bank.damodardhakal&hl=ne" target="_blank"><i class='bx bxl-play-store'></i></a>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Kavresthali Secondary School</h4>
+                <p>A government public school committed to quality education since 2019 B.S. Located in the heart of Tarakeshwor, Kathmandu.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about-school">About</a></li>
+                    <li><a href="#academics">Academics</a></li>
+                    <li><a href="#teachers">Faculty</a></li>
+                    <li><a href="#notices">Notices</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Portals</h4>
+                <ul>
+                    <li><a href="school-login.html">Student Portal</a></li>
+                    <li><a href="school-login.html">Teacher Portal</a></li>
+                    <li><a href="school-admin-login.html">Admin Login</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="#">📍 Tarakeshwor-2, Kathmandu</a></li>
+                    <li><a href="#">📞 +977-01-4910XXX</a></li>
+                    <li><a href="#">✉️ info@kavresthali.edu.np</a></li>
+                    <li><a href="#">🕐 Sun-Fri: 10AM-4PM</a></li>
+                </ul>
+            </div>
         </div>
-
-        <p class="copyright">
-            © Kavresthali Secondary School · Tarakeshwor Municipality-2, Kathmandu, Nepal<br>
-            <small>"जननी जन्मभूमिश्च स्वर्गादपि गरीयसी" — Mother and Motherland are Greater than Heaven</small>
-        </p>
+        <div class="footer-bottom">
+            <div class="footer-socials">
+                <a href="https://www.facebook.com/shukdev.dhakal.3" target="_blank"><i class='bx bxl-facebook'></i></a>
+                <a href="https://instagram.com/shukdevdhakal007" target="_blank"><i class='bx bxl-instagram'></i></a>
+                <a href="https://play.google.com/store/apps/details?id=com.bank.damodardhakal&hl=ne" target="_blank"><i class='bx bxl-play-store'></i></a>
+            </div>
+            <p>&copy; 2082 Kavresthali Secondary School &middot; Tarakeshwor Municipality-2, Kathmandu, Nepal</p>
+            <p class="motto">"जननी जन्मभूमिश्च स्वर्गादपि गरीयसी" — Mother and Motherland are Greater than Heaven</p>
+        </div>
     </footer>
 
-    <script src="script.js"></script>
     <script>
-    /* ====== LOAD DYNAMIC DATA FROM LOCALSTORAGE ====== */
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+        var nav = document.getElementById('navbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    });
 
     // Helper
     function getStoredData(key, defaults) {
@@ -200,200 +438,168 @@
         return stored ? JSON.parse(stored) : defaults;
     }
 
-    // ===== SCHOOL INFO =====
-    (function loadSchoolInfo() {
-        var defaults = { name: 'Kavresthali Secondary School', founded: '2019 B.S.', founder: 'T.P. Dhakal', type: 'Public', grades: 'ECD – 12', students: '644+', headmaster: 'P. Pokhrel', director: 'S. Dhakal', ward: 'Tarakeshwor-2', affiliation: 'Nepal Gov.', motto: 'Mother and Motherland are Greater than Heaven', about: 'Founded in 2019 B.S. by Mr. Tirtha Prasad Dhakal, Kavresthali Secondary School is a government public school located in Tarakeshwor Municipality-2, Kavresthali, Kathmandu. Affiliated with the Nepal Government, we offer education from ECD through Grade 12.' };
+    // SCHOOL INFO
+    (function() {
+        var defaults = { name:'Kavresthali Secondary School', founded:'2019 B.S.', founder:'T.P. Dhakal', type:'Public', grades:'ECD – 12', students:'644+', headmaster:'P. Pokhrel', director:'S. Dhakal', ward:'Tarakeshwor-2', affiliation:'Nepal Gov.', motto:'Mother and Motherland are Greater than Heaven', about:'Founded in 2019 B.S. by Mr. Tirtha Prasad Dhakal, Kavresthali Secondary School is a government public school located in Tarakeshwor Municipality-2, Kavresthali, Kathmandu. Affiliated with the Nepal Government, we offer education from ECD through Grade 12.' };
         var info = getStoredData('kss_school_info', defaults);
         var el;
-        el = document.getElementById('info-founded'); if (el) el.textContent = info.founded;
-        el = document.getElementById('info-founder'); if (el) el.textContent = info.founder;
-        el = document.getElementById('info-type'); if (el) el.textContent = info.type;
-        el = document.getElementById('info-grades'); if (el) el.textContent = info.grades;
-        el = document.getElementById('info-students'); if (el) el.textContent = info.students;
-        el = document.getElementById('info-headmaster'); if (el) el.textContent = info.headmaster;
-        el = document.getElementById('info-director'); if (el) el.textContent = info.director;
-        el = document.getElementById('info-ward'); if (el) el.textContent = info.ward;
-        el = document.getElementById('info-affiliation'); if (el) el.textContent = info.affiliation;
-        el = document.getElementById('about-description'); if (el && info.about) el.textContent = info.about;
-        // Update stats
+        el = document.getElementById('info-founded'); if(el) el.textContent = info.founded;
+        el = document.getElementById('info-type'); if(el) el.textContent = info.type;
+        el = document.getElementById('info-grades'); if(el) el.textContent = info.grades;
+        el = document.getElementById('info-students'); if(el) el.textContent = info.students;
+        el = document.getElementById('info-headmaster'); if(el) el.textContent = info.headmaster;
+        el = document.getElementById('info-director'); if(el) el.textContent = info.director;
+        el = document.getElementById('info-ward'); if(el) el.textContent = info.ward;
+        el = document.getElementById('info-affiliation'); if(el) el.textContent = info.affiliation;
+        el = document.getElementById('about-description'); if(el && info.about) el.textContent = info.about;
         var statsEl = document.getElementById('hero-stats');
-        if (statsEl && info.students) {
-            statsEl.innerHTML = '<div class="stat"><div class="stat-num">' + info.students + '</div><div class="stat-label">Students Enrolled</div></div><div class="stat"><div class="stat-num">' + (info.grades || 'ECD-12') + '</div><div class="stat-label">Grades Offered</div></div><div class="stat"><div class="stat-num">70+</div><div class="stat-label">Years of Service</div></div>';
+        if(statsEl && info.students) {
+            statsEl.innerHTML = '<div class="stat-item"><div class="num">'+info.students+'</div><div class="label">Students Enrolled</div></div><div class="stat-item"><div class="num">'+(info.grades||'ECD-12')+'</div><div class="label">Grades Offered</div></div><div class="stat-item"><div class="num">70+</div><div class="label">Years of Service</div></div><div class="stat-item"><div class="num">30+</div><div class="label">Expert Teachers</div></div>';
         }
     })();
 
-    // ===== STUDENTS =====
-    (function loadStudents() {
-        var defaults = [{ id: 1, name: 'Riya Shrestha', grade: 'Grade 10', roll: '07', studentId: 'KSS-2081-10-007', house: 'Bagmati', dob: '2068-04-15 B.S.', guardian: 'Ram Shrestha', contact: '+977-9841XXXXXX', address: 'Kavresthali, KTM', attendance: '96.4%', mathScore: '88', scienceScore: '91', englishScore: '85', nepaliScore: '92', socialScore: '87', computerScore: '90', achievements: 'District Math Olympiad, Best Reader Award, Cultural Performance, Inter-school Football, Class Representative' }];
+    // STUDENTS
+    (function() {
+        var defaults = [{ id:1, name:'Riya Shrestha', grade:'Grade 10', roll:'07', studentId:'KSS-2081-10-007', house:'Bagmati', dob:'2068-04-15 B.S.', guardian:'Ram Shrestha', contact:'+977-9841XXXXXX', address:'Kavresthali, KTM', attendance:'96.4%', mathScore:'88', scienceScore:'91', englishScore:'85', nepaliScore:'92', socialScore:'87', computerScore:'90', achievements:'District Math Olympiad, Best Reader Award, Cultural Performance, Inter-school Football, Class Representative' }];
         var students = getStoredData('kss_students', defaults);
         var container = document.getElementById('student-profiles-container');
-        if (!container) return;
-
-        if (students.length === 0) {
-            container.innerHTML = '<p style="text-align:center;color:#999;font-size:1.5rem;">No student profiles available.</p>';
-            return;
-        }
-
+        if(!container) return;
+        if(students.length === 0) { container.innerHTML = '<p style="text-align:center;color:var(--text-light);font-size:1.5rem;">No student profiles available.</p>'; return; }
         var html = '';
-        for (var i = 0; i < students.length; i++) {
+        for(var i = 0; i < students.length; i++) {
             var s = students[i];
             var initial = s.name ? s.name.charAt(0) : '?';
             var achievementsArr = s.achievements ? s.achievements.split(',') : [];
-            var achieveHtml = '';
-            for (var j = 0; j < achievementsArr.length; j++) {
-                achieveHtml += '<span class="badge-pill">' + achievementsArr[j].trim() + '</span>';
+            html += '<div style="background:var(--white);border-radius:1.5rem;padding:3rem;box-shadow:var(--shadow);margin-bottom:2.5rem;border:1px solid #E8F5E9;">';
+            html += '<div style="display:flex;align-items:center;gap:2rem;margin-bottom:2rem;flex-wrap:wrap;">';
+            html += '<div style="width:70px;height:70px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:2.5rem;font-weight:700;">'+initial+'</div>';
+            html += '<div><div style="font-size:2rem;font-weight:700;color:var(--text);">'+s.name+'</div><div style="font-size:1.4rem;color:var(--primary);">'+s.grade+' &middot; Roll No. '+s.roll+'</div><div style="font-size:1.2rem;color:var(--text-light);margin-top:0.3rem;">'+s.studentId+' &middot; '+(s.house||'')+' House</div></div>';
+            html += '</div>';
+            html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.2rem;margin-bottom:2rem;">';
+            html += '<div style="background:var(--light-bg);padding:1.2rem;border-radius:0.8rem;"><div style="font-size:1.1rem;color:var(--text-light);">Guardian</div><div style="font-size:1.4rem;font-weight:500;">'+(s.guardian||'N/A')+'</div></div>';
+            html += '<div style="background:var(--light-bg);padding:1.2rem;border-radius:0.8rem;"><div style="font-size:1.1rem;color:var(--text-light);">DOB</div><div style="font-size:1.4rem;font-weight:500;">'+(s.dob||'N/A')+'</div></div>';
+            html += '<div style="background:var(--light-bg);padding:1.2rem;border-radius:0.8rem;"><div style="font-size:1.1rem;color:var(--text-light);">Attendance</div><div style="font-size:1.4rem;font-weight:500;color:var(--primary);">'+(s.attendance||'N/A')+'</div></div>';
+            html += '<div style="background:var(--light-bg);padding:1.2rem;border-radius:0.8rem;"><div style="font-size:1.1rem;color:var(--text-light);">Contact</div><div style="font-size:1.4rem;font-weight:500;">'+(s.contact||'N/A')+'</div></div>';
+            html += '</div>';
+            html += '<div style="margin-bottom:2rem;"><div style="font-size:1.4rem;font-weight:600;color:var(--text);margin-bottom:1rem;">📊 Subject Scores</div><div style="display:flex;flex-wrap:wrap;gap:1rem;">';
+            if(s.mathScore) html += '<div style="background:#E3F2FD;padding:0.8rem 1.5rem;border-radius:0.6rem;font-size:1.3rem;">Math <strong style="color:#1565C0;">'+s.mathScore+'</strong></div>';
+            if(s.scienceScore) html += '<div style="background:#E8F5E9;padding:0.8rem 1.5rem;border-radius:0.6rem;font-size:1.3rem;">Science <strong style="color:#2E7D32;">'+s.scienceScore+'</strong></div>';
+            if(s.englishScore) html += '<div style="background:#F3E5F5;padding:0.8rem 1.5rem;border-radius:0.6rem;font-size:1.3rem;">English <strong style="color:#7B1FA2;">'+s.englishScore+'</strong></div>';
+            if(s.nepaliScore) html += '<div style="background:#FFF3E0;padding:0.8rem 1.5rem;border-radius:0.6rem;font-size:1.3rem;">Nepali <strong style="color:#E65100;">'+s.nepaliScore+'</strong></div>';
+            if(s.socialScore) html += '<div style="background:#E0F2F1;padding:0.8rem 1.5rem;border-radius:0.6rem;font-size:1.3rem;">Social <strong style="color:#00695C;">'+s.socialScore+'</strong></div>';
+            if(s.computerScore) html += '<div style="background:#FCE4EC;padding:0.8rem 1.5rem;border-radius:0.6rem;font-size:1.3rem;">Computer <strong style="color:#AD1457;">'+s.computerScore+'</strong></div>';
+            html += '</div></div>';
+            if(achievementsArr.length > 0) {
+                html += '<div><div style="font-size:1.4rem;font-weight:600;color:var(--text);margin-bottom:1rem;">🏆 Achievements</div><div style="display:flex;flex-wrap:wrap;gap:0.8rem;">';
+                for(var j = 0; j < achievementsArr.length; j++) {
+                    html += '<span style="background:linear-gradient(135deg,var(--primary),var(--primary-light));color:white;padding:0.5rem 1.2rem;border-radius:5rem;font-size:1.2rem;font-weight:500;">'+achievementsArr[j].trim()+'</span>';
+                }
+                html += '</div></div>';
             }
-
-            html += '<div class="profile-wrapper" style="margin-bottom:3rem;">';
-            html += '<div class="profile-card"><div class="profile-avatar">' + initial + '</div><div class="profile-name">' + s.name + '</div><div class="profile-grade">' + s.grade + ' · Roll No. ' + s.roll + '</div><div class="profile-id" style="margin-top:1.5rem;">' + s.studentId + '</div>';
-            html += '<div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.3);"><div style="font-size:1.2rem;color:rgba(255,255,255,0.6);margin-bottom:0.5rem;">House · ' + (s.house || 'N/A') + '</div></div></div>';
-
-            html += '<div class="profile-details">';
-            html += '<div class="detail-section"><div class="detail-title">Personal Details</div><div class="detail-grid">';
-            html += '<div class="detail-item"><div class="detail-key">Full Name</div><div class="detail-val">' + s.name + '</div></div>';
-            html += '<div class="detail-item"><div class="detail-key">Date of Birth</div><div class="detail-val">' + (s.dob || 'N/A') + '</div></div>';
-            html += '<div class="detail-item"><div class="detail-key">Guardian</div><div class="detail-val">' + (s.guardian || 'N/A') + '</div></div>';
-            html += '<div class="detail-item"><div class="detail-key">Contact</div><div class="detail-val">' + (s.contact || 'N/A') + '</div></div>';
-            html += '<div class="detail-item"><div class="detail-key">Address</div><div class="detail-val">' + (s.address || 'N/A') + '</div></div>';
-            html += '<div class="detail-item"><div class="detail-key">Attendance</div><div class="detail-val" style="color:var(--main-color);">' + (s.attendance || 'N/A') + '</div></div>';
-            html += '</div></div>';
-
-            html += '<div class="detail-section"><div class="detail-title">Subject Scores</div><div class="subjects-grid">';
-            if (s.mathScore) html += '<div class="sub-badge">Mathematics<span class="sub-score" style="color:#2563eb;">' + s.mathScore + '</span></div>';
-            if (s.scienceScore) html += '<div class="sub-badge">Science<span class="sub-score" style="color:#16a34a;">' + s.scienceScore + '</span></div>';
-            if (s.englishScore) html += '<div class="sub-badge">English<span class="sub-score" style="color:#7c3aed;">' + s.englishScore + '</span></div>';
-            if (s.nepaliScore) html += '<div class="sub-badge">Nepali<span class="sub-score" style="color:var(--main-color);">' + s.nepaliScore + '</span></div>';
-            if (s.socialScore) html += '<div class="sub-badge">Social<span class="sub-score" style="color:#0f766e;">' + s.socialScore + '</span></div>';
-            if (s.computerScore) html += '<div class="sub-badge">Computer<span class="sub-score" style="color:#be185d;">' + s.computerScore + '</span></div>';
-            html += '</div></div>';
-
-            if (achieveHtml) {
-                html += '<div class="detail-section"><div class="detail-title">🏆 Achievement Wall</div><div class="achievements">' + achieveHtml + '</div></div>';
-            }
-
-            html += '</div></div>';
+            html += '</div>';
         }
         container.innerHTML = html;
     })();
 
-    // ===== TEACHERS =====
-    (function loadTeachers() {
+    // TEACHERS
+    (function() {
         var defaults = [
-            { id: 1, name: 'Prahlad Pokhrel', initials: 'PP', subject: 'Headmaster', qualification: 'M.Ed. Education Management, TU', experience: '15+ yrs', color: '#007F73' },
-            { id: 2, name: 'Sita Maharjan', initials: 'SM', subject: 'Mathematics', qualification: 'B.Sc. Mathematics, Tribhuvan University', experience: '10 yrs', color: '#2563eb' },
-            { id: 3, name: 'Ram Ghimire', initials: 'RG', subject: 'Science & Environment', qualification: 'M.Sc. Physics, Patan College', experience: '12 yrs', color: '#16a34a' },
-            { id: 4, name: 'Anita Shrestha', initials: 'AS', subject: 'English Language', qualification: 'B.Ed. English, Tribhuvan University', experience: '8 yrs', color: '#7c3aed' },
-            { id: 5, name: 'Kiran Bajracharya', initials: 'KB', subject: 'Nepali & Social Studies', qualification: 'M.A. Nepali Literature, TU', experience: '14 yrs', color: '#be185d' },
-            { id: 6, name: 'Dipak Poudel', initials: 'DP', subject: 'Computer Science', qualification: 'B.Tech Computer Engineering, IOE', experience: '6 yrs', color: '#0f766e' },
-            { id: 7, name: 'Maya Karki', initials: 'MK', subject: 'Health & Physical Ed.', qualification: 'B.P.Ed. Physical Education, TU', experience: '9 yrs', color: '#b45309' },
-            { id: 8, name: 'Sunita Tamang', initials: 'ST', subject: 'Arts & Culture', qualification: 'B.F.A. Fine Arts, Lalitkala Campus', experience: '7 yrs', color: '#4c1d95' }
+            { id:1, name:'Prahlad Pokhrel', initials:'PP', subject:'Headmaster', qualification:'M.Ed. Education Management, TU', experience:'15+ yrs', color:'#1B5E20' },
+            { id:2, name:'Sita Maharjan', initials:'SM', subject:'Mathematics', qualification:'B.Sc. Mathematics, TU', experience:'10 yrs', color:'#1565C0' },
+            { id:3, name:'Ram Ghimire', initials:'RG', subject:'Science & Environment', qualification:'M.Sc. Physics', experience:'12 yrs', color:'#2E7D32' },
+            { id:4, name:'Anita Shrestha', initials:'AS', subject:'English Language', qualification:'B.Ed. English, TU', experience:'8 yrs', color:'#7B1FA2' },
+            { id:5, name:'Kiran Bajracharya', initials:'KB', subject:'Nepali & Social Studies', qualification:'M.A. Nepali Literature', experience:'14 yrs', color:'#AD1457' },
+            { id:6, name:'Dipak Poudel', initials:'DP', subject:'Computer Science', qualification:'B.Tech CS, IOE', experience:'6 yrs', color:'#00695C' },
+            { id:7, name:'Maya Karki', initials:'MK', subject:'Health & Physical Ed.', qualification:'B.P.Ed., TU', experience:'9 yrs', color:'#E65100' },
+            { id:8, name:'Sunita Tamang', initials:'ST', subject:'Arts & Culture', qualification:'B.F.A. Fine Arts', experience:'7 yrs', color:'#4527A0' }
         ];
         var teachers = getStoredData('kss_teachers', defaults);
         var container = document.getElementById('teachers-grid');
-        if (!container) return;
-
-        if (teachers.length === 0) {
-            container.innerHTML = '<p style="text-align:center;color:#999;font-size:1.5rem;">No faculty information available.</p>';
-            return;
-        }
-
+        if(!container) return;
+        if(teachers.length === 0) { container.innerHTML = '<p style="text-align:center;color:var(--text-light);font-size:1.5rem;">No faculty information available.</p>'; return; }
         var html = '';
-        for (var i = 0; i < teachers.length; i++) {
+        for(var i = 0; i < teachers.length; i++) {
             var t = teachers[i];
-            html += '<div class="teacher-card"><div class="teacher-avatar" style="background:' + (t.color || '#007F73') + ';">' + (t.initials || t.name.charAt(0)) + '</div><div class="t-name">' + t.name + '</div><div class="t-subject">' + t.subject + '</div><div class="t-qual">' + t.qualification + '</div><span class="t-exp">' + t.experience + ' experience</span></div>';
+            html += '<div class="teacher-card"><div class="avatar" style="background:'+(t.color||'#1B5E20')+';">'+(t.initials||t.name.charAt(0))+'</div><div class="name">'+t.name+'</div><div class="subject">'+t.subject+'</div><div class="qual">'+t.qualification+'</div><span class="exp-badge">'+t.experience+' experience</span></div>';
         }
         container.innerHTML = html;
     })();
 
-    // ===== ANNOUNCEMENTS =====
-    (function loadAnnouncements() {
+    // ANNOUNCEMENTS
+    (function() {
         var defaults = [
-            { id: 1, tag: '📅 Event', title: 'Annual Sports Day 2082 B.S.', description: 'Inter-house competitions across 12 sporting events at school grounds. All students must participate.', date: 'Jestha 30, 2082 B.S.', type: 'default' },
-            { id: 2, tag: '📝 Academic', title: 'Second Terminal Exam Schedule', description: 'Exams commence Ashadh 10. Detailed timetables shared via school app. Carry your ID card.', date: 'Jestha 25, 2082 B.S.', type: 'blue' },
-            { id: 3, tag: '🚨 Important', title: 'Fee Payment Deadline', description: 'All outstanding fees must be cleared before Ashadh 15. Online payment available via school app.', date: 'Jestha 20, 2082 B.S.', type: 'red' },
-            { id: 4, tag: '📋 PTM', title: 'Parent-Teacher Meeting', description: 'Scheduled Ashadh 20. Book your slot via the PTM Scheduler in the school app.', date: 'Jestha 18, 2082 B.S.', type: 'default' }
+            { id:1, tag:'📅 Event', title:'Annual Sports Day 2082 B.S.', description:'Inter-house competitions across 12 sporting events at school grounds.', date:'Jestha 30, 2082 B.S.', type:'default' },
+            { id:2, tag:'📝 Academic', title:'Second Terminal Exam Schedule', description:'Exams commence Ashadh 10. Detailed timetables shared via school app.', date:'Jestha 25, 2082 B.S.', type:'blue' },
+            { id:3, tag:'🚨 Important', title:'Fee Payment Deadline', description:'All outstanding fees must be cleared before Ashadh 15.', date:'Jestha 20, 2082 B.S.', type:'red' },
+            { id:4, tag:'📋 PTM', title:'Parent-Teacher Meeting', description:'Scheduled Ashadh 20. Book your slot via the school app.', date:'Jestha 18, 2082 B.S.', type:'default' }
         ];
         var announcements = getStoredData('kss_announcements', defaults);
         var container = document.getElementById('notices-grid');
-        if (!container) return;
-
-        if (announcements.length === 0) {
-            container.innerHTML = '<p style="text-align:center;color:#999;font-size:1.5rem;">No announcements at this time.</p>';
-            return;
-        }
-
+        if(!container) return;
+        if(announcements.length === 0) { container.innerHTML = '<p style="text-align:center;color:var(--text-light);font-size:1.5rem;">No announcements at this time.</p>'; return; }
         var html = '';
-        for (var i = 0; i < announcements.length; i++) {
+        for(var i = 0; i < announcements.length; i++) {
             var a = announcements[i];
             var typeClass = a.type === 'blue' ? ' blue' : (a.type === 'red' ? ' red' : '');
-            html += '<div class="notice-card' + typeClass + '"><div class="ntag">' + a.tag + '</div><h3>' + a.title + '</h3><p>' + a.description + '</p><div class="ndate">' + a.date + '</div></div>';
+            html += '<div class="notice-card'+typeClass+'"><div class="tag">'+a.tag+'</div><h3>'+a.title+'</h3><p>'+a.description+'</p><div class="date">📅 '+a.date+'</div></div>';
         }
         container.innerHTML = html;
-
-        // Also update hero latest updates
+        // Update hero
         var updatesContainer = document.getElementById('latest-updates');
-        if (updatesContainer && announcements.length > 0) {
+        if(updatesContainer && announcements.length > 0) {
             var updatesHtml = '<h3>📢 Latest Updates</h3>';
             var limit = Math.min(announcements.length, 4);
-            for (var i = 0; i < limit; i++) {
+            for(var i = 0; i < limit; i++) {
                 var a = announcements[i];
-                var borderStyle = i < limit - 1 ? 'margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(0,127,115,0.15);' : 'margin-bottom:0;';
-                updatesHtml += '<p style="font-size:1.4rem;' + borderStyle + '">' + a.tag.split(' ')[0] + ' ' + a.title + '<br><small style="color:#999;">' + a.date + '</small></p>';
+                updatesHtml += '<div class="update-item"><div class="update-icon">'+a.tag.split(' ')[0]+'</div><div><div class="update-text">'+a.title+'</div><div class="update-date">'+a.date+'</div></div></div>';
             }
             updatesContainer.innerHTML = updatesHtml;
         }
     })();
 
-    // ===== GALLERY =====
-    (function loadGallery() {
+    // GALLERY
+    (function() {
         var defaults = [
-            { id: 1, icon: '🏫', label: 'School Campus', gradient: 'linear-gradient(135deg,#007F73,#00b3a1)' },
-            { id: 2, icon: '🏆', label: 'Annual Prize Day', gradient: 'linear-gradient(135deg,#b45309,#d97706)' },
-            { id: 3, icon: '🔬', label: 'Science Lab', gradient: 'linear-gradient(135deg,#065f46,#059669)' },
-            { id: 4, icon: '🎭', label: 'Cultural Program', gradient: 'linear-gradient(135deg,#4c1d95,#7c3aed)' },
-            { id: 5, icon: '💻', label: 'Computer Lab', gradient: 'linear-gradient(135deg,#1e3a5f,#2563eb)' },
-            { id: 6, icon: '⚽', label: 'Sports Day', gradient: 'linear-gradient(135deg,#7f1d1d,#dc2626)' }
+            { id:1, icon:'🏫', label:'School Campus', gradient:'linear-gradient(135deg,#1B5E20,#4CAF50)' },
+            { id:2, icon:'🏆', label:'Annual Prize Day', gradient:'linear-gradient(135deg,#E65100,#FF6F00)' },
+            { id:3, icon:'🔬', label:'Science Lab', gradient:'linear-gradient(135deg,#1565C0,#42A5F5)' },
+            { id:4, icon:'🎭', label:'Cultural Program', gradient:'linear-gradient(135deg,#4527A0,#7B1FA2)' },
+            { id:5, icon:'💻', label:'Computer Lab', gradient:'linear-gradient(135deg,#00695C,#00897B)' },
+            { id:6, icon:'⚽', label:'Sports Day', gradient:'linear-gradient(135deg,#B71C1C,#E53935)' }
         ];
         var gallery = getStoredData('kss_gallery', defaults);
         var container = document.getElementById('gallery-grid');
-        if (!container) return;
-
-        if (gallery.length === 0) {
-            container.innerHTML = '<p style="text-align:center;color:#999;font-size:1.5rem;">No gallery items available.</p>';
-            return;
-        }
-
+        if(!container) return;
+        if(gallery.length === 0) { container.innerHTML = '<p style="text-align:center;color:var(--text-light);font-size:1.5rem;">No gallery items available.</p>'; return; }
         var html = '';
-        for (var i = 0; i < gallery.length; i++) {
+        for(var i = 0; i < gallery.length; i++) {
             var g = gallery[i];
-            html += '<div class="gallery-card" style="background:' + g.gradient + ';"><div class="gal-icon">' + g.icon + '</div><div class="gal-label">' + g.label + '</div></div>';
+            html += '<div class="gallery-card" style="background:'+g.gradient+';"><div class="g-icon">'+g.icon+'</div><div class="g-label">'+g.label+'</div></div>';
         }
         container.innerHTML = html;
     })();
 
-    // ===== CONTACT =====
-    (function loadContact() {
-        var defaults = { address: 'Tarakeshwor Municipality-2, Kavresthali, Kathmandu, Bagmati Province, Nepal', phone: '+977-01-4910XXX', email: 'info@kavresthali.edu.np', hours: 'Sun – Fri: 10:00 AM – 4:00 PM', headmaster: 'Prahlad Pokhrel', coordinates: '27.7848°N, 85.3010°E' };
+    // CONTACT
+    (function() {
+        var defaults = { address:'Tarakeshwor Municipality-2, Kavresthali, Kathmandu, Nepal', phone:'+977-01-4910XXX', email:'info@kavresthali.edu.np', hours:'Sun – Fri: 10:00 AM – 4:00 PM', headmaster:'Prahlad Pokhrel', coordinates:'27.7848°N, 85.3010°E' };
         var contact = getStoredData('kss_contact', defaults);
         var container = document.getElementById('contact-info-container');
-        if (!container) return;
-
+        if(!container) return;
         var html = '';
-        html += '<div class="cinfo-item"><div class="cinfo-icon">📍</div><div><div class="cinfo-label">Address</div><div class="cinfo-val">' + (contact.address || 'N/A') + '</div></div></div>';
-        html += '<div class="cinfo-item"><div class="cinfo-icon">📞</div><div><div class="cinfo-label">Phone</div><div class="cinfo-val">' + (contact.phone || 'N/A') + '</div></div></div>';
-        html += '<div class="cinfo-item"><div class="cinfo-icon">✉️</div><div><div class="cinfo-label">Email</div><div class="cinfo-val">' + (contact.email || 'N/A') + '</div></div></div>';
-        html += '<div class="cinfo-item"><div class="cinfo-icon">🕐</div><div><div class="cinfo-label">Office Hours</div><div class="cinfo-val">' + (contact.hours || 'N/A') + '</div></div></div>';
-        html += '<div class="cinfo-item"><div class="cinfo-icon">🏛️</div><div><div class="cinfo-label">Headmaster</div><div class="cinfo-val">' + (contact.headmaster || 'N/A') + '</div></div></div>';
-        html += '<div class="cinfo-item"><div class="cinfo-icon">📌</div><div><div class="cinfo-label">Coordinates</div><div class="cinfo-val">' + (contact.coordinates || 'N/A') + '</div></div></div>';
+        html += '<div class="contact-item"><div class="c-icon">📍</div><div class="info"><div class="c-label">Address</div><div class="c-value">'+(contact.address||'N/A')+'</div></div></div>';
+        html += '<div class="contact-item"><div class="c-icon">📞</div><div class="info"><div class="c-label">Phone</div><div class="c-value">'+(contact.phone||'N/A')+'</div></div></div>';
+        html += '<div class="contact-item"><div class="c-icon">✉️</div><div class="info"><div class="c-label">Email</div><div class="c-value">'+(contact.email||'N/A')+'</div></div></div>';
+        html += '<div class="contact-item"><div class="c-icon">🕐</div><div class="info"><div class="c-label">Office Hours</div><div class="c-value">'+(contact.hours||'N/A')+'</div></div></div>';
+        html += '<div class="contact-item"><div class="c-icon">🏛️</div><div class="info"><div class="c-label">Headmaster</div><div class="c-value">'+(contact.headmaster||'N/A')+'</div></div></div>';
+        html += '<div class="contact-item"><div class="c-icon">📌</div><div class="info"><div class="c-label">Coordinates</div><div class="c-value">'+(contact.coordinates||'N/A')+'</div></div></div>';
         container.innerHTML = html;
     })();
 
-    /* ── CONTACT FORM ── */
+    // CONTACT FORM
     function submitForm() {
         document.getElementById('form-fields').style.display = 'none';
         document.getElementById('form-success').style.display = 'block';
     }
     </script>
 </body>
-
 </html>
