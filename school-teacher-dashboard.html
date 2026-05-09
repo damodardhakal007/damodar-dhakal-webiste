@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Teacher Dashboard - Kavresthali Secondary School</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        :root { --primary: #007F73; --primary-light: #00b3a1; --dark: #0a192f; --dark-2: #112240; --sidebar-w: 260px; --text: #e2e8f0; --text-dim: #94a3b8; --card-bg: rgba(255,255,255,0.05); --border: rgba(255,255,255,0.1); }
+        body { background: var(--dark); color: var(--text); min-height: 100vh; font-size: 14px; }
+        .sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: var(--dark-2); border-right: 1px solid var(--border); padding: 2rem 0; z-index: 100; overflow-y: auto; transition: transform 0.3s; }
+        .sidebar-header { padding: 0 1.5rem 2rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; text-align: center; }
+        .sidebar-header .profile-pic { width: 70px; height: 70px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 2rem; color: #fff; overflow: hidden; border: 3px solid var(--primary-light); }
+        .sidebar-header .profile-pic img { width: 100%; height: 100%; object-fit: cover; }
+        .sidebar-header h2 { color: var(--primary-light); font-size: 1.1rem; margin-bottom: 0.3rem; }
+        .sidebar-header p { color: var(--text-dim); font-size: 0.8rem; }
+        .nav-item { display: flex; align-items: center; padding: 1rem 1.5rem; color: var(--text-dim); text-decoration: none; font-size: 0.95rem; transition: all 0.2s; cursor: pointer; border-left: 3px solid transparent; }
+        .nav-item:hover, .nav-item.active { background: rgba(0,127,115,0.1); color: var(--primary-light); border-left-color: var(--primary); }
+        .nav-item i { font-size: 1.3rem; margin-right: 1rem; width: 24px; text-align: center; }
+        .nav-item.logout { margin-top: 2rem; color: #ff6b6b; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+        .nav-item.logout:hover { background: rgba(255,107,107,0.1); color: #ff6b6b; border-left-color: #ff6b6b; }
+        .main-content { margin-left: var(--sidebar-w); padding: 2rem 3rem; min-height: 100vh; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .top-bar h1 { font-size: 1.8rem; color: #fff; }
+        .top-bar .user-info { display: flex; align-items: center; gap: 1rem; color: var(--text-dim); }
+        .top-bar .user-info .avatar { width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; overflow: hidden; }
+        .top-bar .user-info .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .panel { display: none; }
+        .panel.active { display: block; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem; transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-card .stat-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .stat-card .stat-num { font-size: 1.8rem; font-weight: 700; color: #fff; }
+        .stat-card .stat-label { color: var(--text-dim); font-size: 0.85rem; margin-top: 0.3rem; }
+        .welcome-banner { background: linear-gradient(135deg, #1e3a5f, #2563eb); border-radius: 1.5rem; padding: 2.5rem; margin-bottom: 2rem; position: relative; overflow: hidden; }
+        .welcome-banner::after { content: '👨‍🏫'; position: absolute; right: 2rem; top: 50%; transform: translateY(-50%); font-size: 5rem; opacity: 0.2; }
+        .welcome-banner h2 { color: #fff; font-size: 1.6rem; margin-bottom: 0.5rem; }
+        .welcome-banner p { color: rgba(255,255,255,0.8); font-size: 1rem; }
+        .info-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 1rem; padding: 2rem; margin-bottom: 1.5rem; }
+        .info-card h3 { color: #fff; font-size: 1.2rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .info-row { display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid var(--border); }
+        .info-row:last-child { border-bottom: none; }
+        .info-row .label { color: var(--text-dim); }
+        .info-row .value { color: #fff; font-weight: 500; }
+        .data-table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 1rem; overflow: hidden; border: 1px solid var(--border); }
+        .data-table th, .data-table td { padding: 1rem 1.2rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .data-table th { background: rgba(0,127,115,0.15); color: var(--primary-light); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .data-table td { color: var(--text); font-size: 0.9rem; }
+        .data-table tr:hover td { background: rgba(255,255,255,0.03); }
+        .announcement-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 0.8rem; padding: 1.5rem; margin-bottom: 1rem; transition: all 0.2s; }
+        .announcement-item:hover { border-color: var(--primary); }
+        .announcement-item .ann-tag { display: inline-block; background: rgba(0,127,115,0.2); color: var(--primary-light); padding: 0.3rem 0.8rem; border-radius: 2rem; font-size: 0.8rem; margin-bottom: 0.8rem; }
+        .announcement-item .ann-tag.blue { background: rgba(37,99,235,0.2); color: #60a5fa; }
+        .announcement-item .ann-tag.red { background: rgba(220,38,38,0.2); color: #ff6b6b; }
+        .announcement-item h4 { color: #fff; margin-bottom: 0.5rem; }
+        .announcement-item p { color: var(--text-dim); font-size: 0.9rem; }
+        .announcement-item .ann-date { color: var(--text-dim); font-size: 0.8rem; margin-top: 0.5rem; }
+        .schedule-table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 1rem; overflow: hidden; border: 1px solid var(--border); }
+        .schedule-table th, .schedule-table td { padding: 1rem 1.2rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .schedule-table th { background: rgba(37,99,235,0.15); color: #60a5fa; font-size: 0.85rem; text-transform: uppercase; }
+        .schedule-table td { color: var(--text); font-size: 0.9rem; }
+        .student-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 0.8rem; padding: 1.2rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; transition: all 0.2s; }
+        .student-card:hover { border-color: var(--primary); }
+        .student-card .stu-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; flex-shrink: 0; }
+        .student-card .stu-info { flex: 1; }
+        .student-card .stu-info .stu-name { color: #fff; font-weight: 500; }
+        .student-card .stu-info .stu-detail { color: var(--text-dim); font-size: 0.8rem; }
+        .student-card .stu-grade { color: var(--primary-light); font-weight: 600; font-size: 1.1rem; }
+        .profile-section { max-width: 600px; }
+        .profile-pic-upload { text-align: center; margin-bottom: 2rem; }
+        .profile-pic-upload .pic-preview { width: 120px; height: 120px; border-radius: 50%; background: var(--card-bg); border: 3px solid var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 3rem; overflow: hidden; }
+        .profile-pic-upload .pic-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-pic-upload label { display: inline-block; padding: 0.7rem 1.5rem; background: var(--primary); color: #fff; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+        .profile-pic-upload label:hover { background: var(--primary-light); }
+        .profile-pic-upload input[type="file"] { display: none; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; color: var(--text-dim); font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input, .form-group textarea { width: 100%; padding: 0.9rem 1.2rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 0.7rem; color: #fff; font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
+        .form-group textarea { min-height: 80px; resize: vertical; font-family: inherit; }
+        .btn { padding: 0.8rem 1.5rem; border: none; border-radius: 0.7rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-light); transform: translateY(-1px); }
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.8rem; }
+        .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--primary); color: #fff; padding: 1rem 2rem; border-radius: 0.8rem; font-size: 0.9rem; z-index: 9999; display: none; box-shadow: 0 10px 30px rgba(0,127,115,0.3); }
+        .menu-toggle { display: none; position: fixed; top: 1rem; left: 1rem; z-index: 200; background: var(--primary); border: none; color: #fff; width: 40px; height: 40px; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer; }
+        .note-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 0.8rem; padding: 1.2rem 1.5rem; margin-bottom: 0.8rem; }
+        .note-item .note-date { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 0.5rem; }
+        .note-item .note-text { color: var(--text); font-size: 0.95rem; }
+        .note-item .note-actions { margin-top: 0.8rem; display: flex; gap: 0.5rem; }
+        .btn-danger-sm { padding: 0.4rem 0.8rem; background: rgba(220,38,38,0.2); color: #ff6b6b; border: none; border-radius: 0.4rem; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; }
+        .btn-danger-sm:hover { background: rgba(220,38,38,0.4); }
+        .table-wrapper { overflow-x: auto; }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 2rem 1.5rem; padding-top: 4rem; }
+            .menu-toggle { display: flex; align-items: center; justify-content: center; }
+            .cards-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()"><i class='bx bx-menu'></i></button>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="profile-pic" id="sidebarProfilePic">👨‍🏫</div>
+            <h2 id="sidebarName">Teacher</h2>
+            <p id="sidebarSubject">Teacher Portal</p>
+        </div>
+        <div class="nav-item active" data-panel="dashboard" onclick="switchPanel('dashboard')"><i class='bx bx-home-circle'></i> Dashboard</div>
+        <div class="nav-item" data-panel="students" onclick="switchPanel('students')"><i class='bx bx-group'></i> My Students</div>
+        <div class="nav-item" data-panel="schedule" onclick="switchPanel('schedule')"><i class='bx bx-calendar'></i> Schedule</div>
+        <div class="nav-item" data-panel="announcements" onclick="switchPanel('announcements')"><i class='bx bx-bell'></i> Announcements</div>
+        <div class="nav-item" data-panel="notes" onclick="switchPanel('notes')"><i class='bx bx-note'></i> My Notes</div>
+        <div class="nav-item" data-panel="profile" onclick="switchPanel('profile')"><i class='bx bx-user-circle'></i> My Profile</div>
+        <div class="nav-item logout" onclick="logout()"><i class='bx bx-log-out'></i> Logout</div>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <h1 id="panelTitle">Dashboard</h1>
+            <div class="user-info">
+                <span id="topBarName">Teacher</span>
+                <div class="avatar" id="topBarAvatar">T</div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div class="panel active" id="panel-dashboard">
+            <div class="welcome-banner">
+                <h2 id="welcomeMsg">Welcome back!</h2>
+                <p>Here's your teaching overview. Have a productive day! 📖</p>
+            </div>
+            <div class="cards-grid">
+                <div class="stat-card"><div class="stat-icon">👨‍🎓</div><div class="stat-num" id="stat-students">0</div><div class="stat-label">Total Students</div></div>
+                <div class="stat-card"><div class="stat-icon">📢</div><div class="stat-num" id="stat-announcements">0</div><div class="stat-label">Announcements</div></div>
+                <div class="stat-card"><div class="stat-icon">📝</div><div class="stat-num" id="stat-notes">0</div><div class="stat-label">My Notes</div></div>
+                <div class="stat-card"><div class="stat-icon">🏫</div><div class="stat-num" id="stat-subject">--</div><div class="stat-label">Subject</div></div>
+            </div>
+            <div class="info-card">
+                <h3><i class='bx bx-info-circle'></i> Quick Info</h3>
+                <div id="teacher-quick-info"></div>
+            </div>
+        </div>
+
+        <!-- STUDENTS -->
+        <div class="panel" id="panel-students">
+            <div class="info-card">
+                <h3><i class='bx bx-group'></i> Student List</h3>
+                <div id="students-list"></div>
+            </div>
+        </div>
+
+        <!-- SCHEDULE -->
+        <div class="panel" id="panel-schedule">
+            <div class="info-card">
+                <h3><i class='bx bx-calendar'></i> My Teaching Schedule</h3>
+                <div style="overflow-x:auto;">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Sunday</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednesday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-body">
+                        </tbody>
+                    </table>
+                </div>
+                <p style="color:var(--text-dim);font-size:0.85rem;margin-top:1rem;">📌 Schedule is based on school timetable. Contact admin for changes.</p>
+            </div>
+        </div>
+
+        <!-- ANNOUNCEMENTS -->
+        <div class="panel" id="panel-announcements">
+            <div id="announcements-list"></div>
+        </div>
+
+        <!-- NOTES -->
+        <div class="panel" id="panel-notes">
+            <div class="info-card">
+                <h3><i class='bx bx-note'></i> My Teaching Notes</h3>
+                <div class="form-group">
+                    <textarea id="new-note" placeholder="Write a note for yourself (lesson plans, reminders, etc.)..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="addNote()"><i class='bx bx-plus'></i> Add Note</button>
+                <div id="notes-list" style="margin-top:1.5rem;"></div>
+            </div>
+        </div>
+
+        <!-- PROFILE -->
+        <div class="panel" id="panel-profile">
+            <div class="info-card profile-section">
+                <h3><i class='bx bx-user-circle'></i> My Profile</h3>
+                <div class="profile-pic-upload">
+                    <div class="pic-preview" id="profilePicPreview">👨‍🏫</div>
+                    <label for="profilePicInput"><i class='bx bx-camera'></i> Change Photo</label>
+                    <input type="file" id="profilePicInput" accept="image/*" onchange="handleProfilePic(event)">
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="profile-name" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="profile-username" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Subject / Role</label>
+                    <input type="text" id="profile-subject" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <input type="text" id="profile-role" disabled value="Teacher">
+                </div>
+            </div>
+            <div class="info-card profile-section" style="margin-top:1.5rem;">
+                <h3><i class='bx bx-lock-alt'></i> Change Password</h3>
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="current-password" placeholder="Enter current password">
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="new-password" placeholder="Enter new password">
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirm-password" placeholder="Confirm new password">
+                </div>
+                <button class="btn btn-primary" onclick="changePassword()"><i class='bx bx-check'></i> Update Password</button>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    // Auth check
+    if (localStorage.getItem('kss_teacher_logged_in') !== 'true') {
+        window.location.href = 'school-login.html';
+    }
+
+    var currentUser = JSON.parse(localStorage.getItem('kss_teacher_current_user') || '{}');
+
+    function init() {
+        var displayName = currentUser.fullName || currentUser.username || 'Teacher';
+        var subject = currentUser.subject || 'Teacher';
+        document.getElementById('sidebarName').textContent = displayName;
+        document.getElementById('sidebarSubject').textContent = subject;
+        document.getElementById('topBarName').textContent = displayName;
+        document.getElementById('welcomeMsg').textContent = 'Welcome back, ' + displayName.split(' ')[0] + '! 👋';
+        document.getElementById('topBarAvatar').textContent = displayName.charAt(0).toUpperCase();
+        document.getElementById('profile-name').value = displayName;
+        document.getElementById('profile-username').value = currentUser.username || '';
+        document.getElementById('profile-subject').value = subject;
+
+        // Load profile picture
+        var profilePic = localStorage.getItem('kss_teacher_profile_pic_' + currentUser.username);
+        if (profilePic) {
+            document.getElementById('sidebarProfilePic').innerHTML = '<img src="' + profilePic + '" alt="Profile">';
+            document.getElementById('topBarAvatar').innerHTML = '<img src="' + profilePic + '" alt="Profile">';
+            document.getElementById('profilePicPreview').innerHTML = '<img src="' + profilePic + '" alt="Profile">';
+        }
+
+        loadDashboard();
+        loadStudents();
+        loadSchedule();
+        loadAnnouncements();
+        loadNotes();
+    }
+
+    function loadDashboard() {
+        var students = JSON.parse(localStorage.getItem('kss_students') || '[]');
+        var announcements = JSON.parse(localStorage.getItem('kss_announcements') || '[]');
+        var notes = JSON.parse(localStorage.getItem('kss_teacher_notes_' + currentUser.username) || '[]');
+
+        document.getElementById('stat-students').textContent = students.length;
+        document.getElementById('stat-announcements').textContent = announcements.length;
+        document.getElementById('stat-notes').textContent = notes.length;
+        document.getElementById('stat-subject').textContent = currentUser.subject || '--';
+
+        // Teacher quick info
+        var teachers = JSON.parse(localStorage.getItem('kss_teachers') || '[]');
+        var myTeacherData = null;
+        if (currentUser.linkedTeacherId) {
+            for (var i = 0; i < teachers.length; i++) {
+                if (teachers[i].id == currentUser.linkedTeacherId) {
+                    myTeacherData = teachers[i];
+                    break;
+                }
+            }
+        }
+
+        var infoHtml = '';
+        if (myTeacherData) {
+            var fields = [
+                { label: 'Name', value: myTeacherData.name },
+                { label: 'Subject', value: myTeacherData.subject },
+                { label: 'Qualification', value: myTeacherData.qualification },
+                { label: 'Experience', value: myTeacherData.experience }
+            ];
+            for (var i = 0; i < fields.length; i++) {
+                if (fields[i].value) {
+                    infoHtml += '<div class="info-row"><span class="label">' + fields[i].label + '</span><span class="value">' + fields[i].value + '</span></div>';
+                }
+            }
+        } else {
+            infoHtml = '<div class="info-row"><span class="label">Subject</span><span class="value">' + (currentUser.subject || 'N/A') + '</span></div>';
+            infoHtml += '<div class="info-row"><span class="label">Username</span><span class="value">' + (currentUser.username || 'N/A') + '</span></div>';
+        }
+        document.getElementById('teacher-quick-info').innerHTML = infoHtml;
+    }
+
+    function loadStudents() {
+        var students = JSON.parse(localStorage.getItem('kss_students') || '[]');
+        var container = document.getElementById('students-list');
+
+        if (students.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-dim);text-align:center;padding:2rem;">No students registered yet.</p>';
+            return;
+        }
+
+        var html = '';
+        for (var i = 0; i < students.length; i++) {
+            var s = students[i];
+            var scores = [s.mathScore, s.scienceScore, s.englishScore, s.nepaliScore, s.socialScore, s.computerScore].filter(function(x) { return x; });
+            var avg = scores.length > 0 ? Math.round(scores.reduce(function(a, b) { return parseInt(a) + parseInt(b); }, 0) / scores.length) : '--';
+            html += '<div class="student-card">' +
+                '<div class="stu-avatar">' + s.name.charAt(0) + '</div>' +
+                '<div class="stu-info"><div class="stu-name">' + s.name + '</div><div class="stu-detail">' + (s.grade || '') + ' | Roll: ' + (s.roll || '') + ' | Attendance: ' + (s.attendance || '--') + '</div></div>' +
+                '<div class="stu-grade">' + avg + (avg !== '--' ? '%' : '') + '</div>' +
+                '</div>';
+        }
+        container.innerHTML = html;
+    }
+
+    function loadSchedule() {
+        var subject = currentUser.subject || 'My Subject';
+        var scheduleData = [
+            ['10:00 - 10:45', subject, 'Free', subject, 'Free', subject, 'Free'],
+            ['10:45 - 11:30', 'Free', subject, 'Free', subject, 'Free', subject],
+            ['11:30 - 12:15', subject, 'Free', subject, 'Free', subject, 'Free'],
+            ['12:15 - 1:00', '🍱 Lunch', '🍱 Lunch', '🍱 Lunch', '🍱 Lunch', '🍱 Lunch', '🍱 Lunch'],
+            ['1:00 - 1:45', 'Free', subject, 'Free', subject, 'Free', subject],
+            ['1:45 - 2:30', subject, 'Free', subject, 'Free', subject, 'Free'],
+            ['2:30 - 3:15', 'Free', 'Staff Meeting', 'Free', 'Free', 'Free', 'Staff Meeting']
+        ];
+
+        var html = '';
+        for (var i = 0; i < scheduleData.length; i++) {
+            html += '<tr>';
+            for (var j = 0; j < scheduleData[i].length; j++) {
+                var cellStyle = scheduleData[i][j] === subject ? 'color:var(--primary-light);font-weight:600;' : '';
+                html += '<td style="' + cellStyle + '">' + scheduleData[i][j] + '</td>';
+            }
+            html += '</tr>';
+        }
+        document.getElementById('schedule-body').innerHTML = html;
+    }
+
+    function loadAnnouncements() {
+        var announcements = JSON.parse(localStorage.getItem('kss_announcements') || '[]');
+        var html = '';
+        if (announcements.length === 0) {
+            html = '<div class="info-card"><p style="color:var(--text-dim);text-align:center;padding:2rem;">No announcements at this time.</p></div>';
+        }
+        for (var i = 0; i < announcements.length; i++) {
+            var a = announcements[i];
+            var tagClass = a.type === 'blue' ? ' blue' : (a.type === 'red' ? ' red' : '');
+            html += '<div class="announcement-item"><span class="ann-tag' + tagClass + '">' + a.tag + '</span><h4>' + a.title + '</h4><p>' + a.description + '</p><div class="ann-date">' + a.date + '</div></div>';
+        }
+        document.getElementById('announcements-list').innerHTML = html;
+    }
+
+    function loadNotes() {
+        var notes = JSON.parse(localStorage.getItem('kss_teacher_notes_' + currentUser.username) || '[]');
+        var container = document.getElementById('notes-list');
+
+        if (notes.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-dim);text-align:center;padding:1rem;">No notes yet. Add your first note above!</p>';
+            return;
+        }
+
+        var html = '';
+        for (var i = 0; i < notes.length; i++) {
+            html += '<div class="note-item"><div class="note-date">' + notes[i].date + '</div><div class="note-text">' + notes[i].text + '</div><div class="note-actions"><button class="btn-danger-sm" onclick="deleteNote(' + i + ')"><i class="bx bx-trash"></i> Delete</button></div></div>';
+        }
+        container.innerHTML = html;
+    }
+
+    function addNote() {
+        var text = document.getElementById('new-note').value.trim();
+        if (!text) { showToast('Please write something first!'); return; }
+
+        var notes = JSON.parse(localStorage.getItem('kss_teacher_notes_' + currentUser.username) || '[]');
+        var now = new Date();
+        notes.unshift({
+            text: text,
+            date: now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        });
+        localStorage.setItem('kss_teacher_notes_' + currentUser.username, JSON.stringify(notes));
+        document.getElementById('new-note').value = '';
+        loadNotes();
+        loadDashboard();
+        showToast('Note added!');
+    }
+
+    function deleteNote(index) {
+        if (!confirm('Delete this note?')) return;
+        var notes = JSON.parse(localStorage.getItem('kss_teacher_notes_' + currentUser.username) || '[]');
+        notes.splice(index, 1);
+        localStorage.setItem('kss_teacher_notes_' + currentUser.username, JSON.stringify(notes));
+        loadNotes();
+        loadDashboard();
+        showToast('Note deleted!');
+    }
+
+    function handleProfilePic(event) {
+        var file = event.target.files[0];
+        if (!file) return;
+        if (file.size > 500000) {
+            showToast('Image too large! Max 500KB.');
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var imgData = e.target.result;
+            localStorage.setItem('kss_teacher_profile_pic_' + currentUser.username, imgData);
+            document.getElementById('sidebarProfilePic').innerHTML = '<img src="' + imgData + '" alt="Profile">';
+            document.getElementById('topBarAvatar').innerHTML = '<img src="' + imgData + '" alt="Profile">';
+            document.getElementById('profilePicPreview').innerHTML = '<img src="' + imgData + '" alt="Profile">';
+            showToast('Profile picture updated!');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function changePassword() {
+        var currentPwd = document.getElementById('current-password').value;
+        var newPwd = document.getElementById('new-password').value;
+        var confirmPwd = document.getElementById('confirm-password').value;
+
+        if (!currentPwd || !newPwd || !confirmPwd) {
+            showToast('Please fill all password fields!');
+            return;
+        }
+        if (newPwd !== confirmPwd) {
+            showToast('New passwords do not match!');
+            return;
+        }
+        if (newPwd.length < 4) {
+            showToast('Password must be at least 4 characters!');
+            return;
+        }
+
+        var accounts = JSON.parse(localStorage.getItem('kss_user_accounts') || '[]');
+        var found = false;
+        for (var i = 0; i < accounts.length; i++) {
+            if (accounts[i].username === currentUser.username && accounts[i].password === currentPwd) {
+                accounts[i].password = newPwd;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            showToast('Current password is incorrect!');
+            return;
+        }
+
+        localStorage.setItem('kss_user_accounts', JSON.stringify(accounts));
+        document.getElementById('current-password').value = '';
+        document.getElementById('new-password').value = '';
+        document.getElementById('confirm-password').value = '';
+        showToast('Password changed successfully! ✅');
+    }
+
+    function switchPanel(panel) {
+        var panels = document.querySelectorAll('.panel');
+        for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+        var navs = document.querySelectorAll('.nav-item');
+        for (var i = 0; i < navs.length; i++) navs[i].classList.remove('active');
+        document.getElementById('panel-' + panel).classList.add('active');
+        var activeNav = document.querySelector('[data-panel="' + panel + '"]');
+        if (activeNav) activeNav.classList.add('active');
+        var titles = { 'dashboard': 'Dashboard', 'students': 'My Students', 'schedule': 'Teaching Schedule', 'announcements': 'Announcements', 'notes': 'My Notes', 'profile': 'My Profile' };
+        document.getElementById('panelTitle').textContent = titles[panel] || 'Dashboard';
+        document.getElementById('sidebar').classList.remove('open');
+    }
+
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+    function logout() {
+        localStorage.removeItem('kss_teacher_logged_in');
+        localStorage.removeItem('kss_teacher_current_user');
+        window.location.href = 'school-login.html';
+    }
+
+    function showToast(msg) {
+        var toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(function() { toast.style.display = 'none'; }, 3000);
+    }
+
+    // Init
+    init();
+    </script>
+</body>
+</html>

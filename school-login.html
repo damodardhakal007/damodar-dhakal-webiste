@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Login - Kavresthali Secondary School</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0a192f 0%, #112240 50%, #1a365d 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 127, 115, 0.1) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2rem;
+            padding: 3rem 3rem;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header .school-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #007F73, #00b3a1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 127, 115, 0.3);
+        }
+
+        .login-header h1 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+        }
+
+        .role-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.8rem;
+            padding: 0.3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .role-tab {
+            flex: 1;
+            padding: 0.9rem;
+            text-align: center;
+            border-radius: 0.6rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+        }
+
+        .role-tab.active {
+            background: linear-gradient(135deg, #007F73, #00b3a1);
+            color: #fff;
+            box-shadow: 0 5px 15px rgba(0, 127, 115, 0.3);
+        }
+
+        .role-tab:hover:not(.active) {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            margin-bottom: 0.6rem;
+            font-weight: 500;
+        }
+
+        .form-group .input-wrapper {
+            position: relative;
+        }
+
+        .form-group .input-wrapper i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 1.4rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1.1rem 1.2rem 1.1rem 3.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 0.8rem;
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #007F73;
+            background: rgba(0, 127, 115, 0.1);
+            box-shadow: 0 0 20px rgba(0, 127, 115, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, #007F73, #00b3a1);
+            border: none;
+            border-radius: 0.8rem;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 127, 115, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 1rem;
+            text-align: center;
+            margin-top: 1.2rem;
+            display: none;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #007F73;
+        }
+
+        .admin-link {
+            display: block;
+            text-align: center;
+            margin-top: 0.8rem;
+            color: rgba(255, 255, 255, 0.35);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .admin-link:hover {
+            color: #007F73;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 1.5rem;
+                padding: 2.5rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="school-icon">🎓</div>
+            <h1>School Portal</h1>
+            <p>Kavresthali Secondary School</p>
+        </div>
+
+        <div class="role-tabs">
+            <button class="role-tab active" onclick="switchRole('student')">
+                <i class='bx bx-user'></i> Student
+            </button>
+            <button class="role-tab" onclick="switchRole('teacher')">
+                <i class='bx bx-chalkboard'></i> Teacher
+            </button>
+        </div>
+
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+            <div class="form-group">
+                <label>Username</label>
+                <div class="input-wrapper">
+                    <i class='bx bx-user'></i>
+                    <input type="text" id="username" placeholder="Enter your username" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrapper">
+                    <i class='bx bx-lock-alt'></i>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn">
+                <i class='bx bx-log-in'></i> Sign In
+            </button>
+
+            <div class="error-msg" id="errorMsg">
+                ❌ Invalid username or password. Please try again.
+            </div>
+        </form>
+
+        <a href="kavresthali_school_website.html" class="back-link">← Back to School Website</a>
+        <a href="school-admin-login.html" class="admin-link">Admin Login →</a>
+    </div>
+
+    <script>
+        var currentRole = 'student';
+
+        // Check if already logged in
+        if (localStorage.getItem('kss_student_logged_in') === 'true') {
+            window.location.href = 'school-student-dashboard.html';
+        }
+        if (localStorage.getItem('kss_teacher_logged_in') === 'true') {
+            window.location.href = 'school-teacher-dashboard.html';
+        }
+
+        function switchRole(role) {
+            currentRole = role;
+            var tabs = document.querySelectorAll('.role-tab');
+            tabs.forEach(function(tab) { tab.classList.remove('active'); });
+            if (role === 'student') {
+                tabs[0].classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+
+            var username = document.getElementById('username').value.trim();
+            var password = document.getElementById('password').value;
+
+            // Get user accounts from localStorage (created by admin)
+            var accounts = JSON.parse(localStorage.getItem('kss_user_accounts') || '[]');
+
+            var foundUser = null;
+            for (var i = 0; i < accounts.length; i++) {
+                if (accounts[i].username === username && accounts[i].password === password && accounts[i].role === currentRole) {
+                    foundUser = accounts[i];
+                    break;
+                }
+            }
+
+            if (foundUser) {
+                if (currentRole === 'student') {
+                    localStorage.setItem('kss_student_logged_in', 'true');
+                    localStorage.setItem('kss_student_current_user', JSON.stringify(foundUser));
+                    window.location.href = 'school-student-dashboard.html';
+                } else {
+                    localStorage.setItem('kss_teacher_logged_in', 'true');
+                    localStorage.setItem('kss_teacher_current_user', JSON.stringify(foundUser));
+                    window.location.href = 'school-teacher-dashboard.html';
+                }
+            } else {
+                var errorMsg = document.getElementById('errorMsg');
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = '❌ Invalid username or password for ' + currentRole + ' account.';
+                setTimeout(function() {
+                    errorMsg.style.display = 'none';
+                }, 3000);
+            }
+
+            return false;
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Admin Dashboard - Kavresthali Secondary School</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        :root { --primary: #007F73; --primary-light: #00b3a1; --dark: #0a192f; --dark-2: #112240; --sidebar-w: 260px; --text: #e2e8f0; --text-dim: #94a3b8; --card-bg: rgba(255,255,255,0.05); --border: rgba(255,255,255,0.1); }
+        body { background: var(--dark); color: var(--text); min-height: 100vh; font-size: 14px; }
+        .sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: var(--dark-2); border-right: 1px solid var(--border); padding: 2rem 0; z-index: 100; overflow-y: auto; transition: transform 0.3s; }
+        .sidebar-header { padding: 0 1.5rem 2rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; text-align: center; }
+        .sidebar-header .admin-pic { width: 60px; height: 60px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-size: 1.5rem; color: #fff; overflow: hidden; border: 2px solid var(--primary-light); }
+        .sidebar-header .admin-pic img { width: 100%; height: 100%; object-fit: cover; }
+        .sidebar-header h2 { color: var(--primary-light); font-size: 1.2rem; margin-bottom: 0.3rem; }
+        .sidebar-header p { color: var(--text-dim); font-size: 0.8rem; }
+        .nav-item { display: flex; align-items: center; padding: 1rem 1.5rem; color: var(--text-dim); text-decoration: none; font-size: 0.95rem; transition: all 0.2s; cursor: pointer; border-left: 3px solid transparent; }
+        .nav-item:hover, .nav-item.active { background: rgba(0,127,115,0.1); color: var(--primary-light); border-left-color: var(--primary); }
+        .nav-item i { font-size: 1.3rem; margin-right: 1rem; width: 24px; text-align: center; }
+        .nav-item.logout { margin-top: 2rem; color: #ff6b6b; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+        .nav-item.logout:hover { background: rgba(255,107,107,0.1); color: #ff6b6b; border-left-color: #ff6b6b; }
+        .main-content { margin-left: var(--sidebar-w); padding: 2rem 3rem; min-height: 100vh; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .top-bar h1 { font-size: 1.8rem; color: #fff; }
+        .top-bar .user-info { display: flex; align-items: center; gap: 1rem; color: var(--text-dim); }
+        .top-bar .user-info .avatar { width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; overflow: hidden; }
+        .top-bar .user-info .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .panel { display: none; }
+        .panel.active { display: block; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .panel-header h2 { font-size: 1.5rem; color: #fff; }
+        .btn { padding: 0.8rem 1.5rem; border: none; border-radius: 0.7rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-light); transform: translateY(-1px); }
+        .btn-danger { background: #dc2626; color: #fff; }
+        .btn-danger:hover { background: #ef4444; }
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.8rem; }
+        .data-table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 1rem; overflow: hidden; border: 1px solid var(--border); }
+        .data-table th, .data-table td { padding: 1rem 1.2rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .data-table th { background: rgba(0,127,115,0.15); color: var(--primary-light); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .data-table td { color: var(--text); font-size: 0.9rem; }
+        .data-table tr:hover td { background: rgba(255,255,255,0.03); }
+        .data-table .actions { display: flex; gap: 0.5rem; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: var(--dark-2); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2.5rem; width: 100%; max-width: 550px; max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal h3 { color: #fff; font-size: 1.4rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; color: var(--text-dim); font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.9rem 1.2rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 0.7rem; color: #fff; font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary); }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        .form-group select option { background: var(--dark-2); color: #fff; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .modal-actions { display: flex; gap: 1rem; margin-top: 2rem; justify-content: flex-end; }
+        .btn-cancel { background: rgba(255,255,255,0.1); color: var(--text); border: 1px solid var(--border); }
+        .btn-cancel:hover { background: rgba(255,255,255,0.15); }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem; }
+        .stat-card .stat-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .stat-card .stat-num { font-size: 2rem; font-weight: 700; color: #fff; }
+        .stat-card .stat-label { color: var(--text-dim); font-size: 0.85rem; margin-top: 0.3rem; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; }
+        .gallery-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 1rem; padding: 2rem 1.5rem; text-align: center; position: relative; }
+        .gallery-item .gal-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .gallery-item .gal-label { color: #fff; font-size: 0.95rem; font-weight: 500; }
+        .gallery-item .item-actions { position: absolute; top: 0.8rem; right: 0.8rem; display: flex; gap: 0.3rem; }
+        .item-actions .btn-icon { width: 28px; height: 28px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+        .btn-icon.edit { background: rgba(0,127,115,0.3); color: var(--primary-light); }
+        .btn-icon.delete { background: rgba(220,38,38,0.3); color: #ff6b6b; }
+        .btn-icon:hover { transform: scale(1.1); }
+        .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--primary); color: #fff; padding: 1rem 2rem; border-radius: 0.8rem; font-size: 0.9rem; z-index: 9999; display: none; box-shadow: 0 10px 30px rgba(0,127,115,0.3); }
+        .menu-toggle { display: none; position: fixed; top: 1rem; left: 1rem; z-index: 200; background: var(--primary); border: none; color: #fff; width: 40px; height: 40px; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer; }
+        .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-dim); }
+        .empty-state i { font-size: 4rem; margin-bottom: 1rem; opacity: 0.5; display: block; }
+        .empty-state p { font-size: 1rem; }
+        .table-wrapper { overflow-x: auto; }
+        .profile-section { max-width: 600px; }
+        .profile-pic-upload { text-align: center; margin-bottom: 2rem; }
+        .profile-pic-upload .pic-preview { width: 120px; height: 120px; border-radius: 50%; background: var(--card-bg); border: 3px solid var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 3rem; overflow: hidden; }
+        .profile-pic-upload .pic-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-pic-upload label.upload-btn { display: inline-block; padding: 0.7rem 1.5rem; background: var(--primary); color: #fff; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+        .profile-pic-upload label.upload-btn:hover { background: var(--primary-light); }
+        .profile-pic-upload input[type="file"] { display: none; }
+        .info-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 1rem; padding: 2rem; margin-bottom: 1.5rem; }
+        .info-card h3 { color: #fff; font-size: 1.2rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .role-badge { display: inline-block; padding: 0.3rem 0.7rem; border-radius: 2rem; font-size: 0.75rem; font-weight: 600; }
+        .role-badge.student { background: rgba(37,99,235,0.2); color: #60a5fa; }
+        .role-badge.teacher { background: rgba(0,127,115,0.2); color: var(--primary-light); }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 2rem 1.5rem; padding-top: 4rem; }
+            .menu-toggle { display: flex; align-items: center; justify-content: center; }
+            .form-row { grid-template-columns: 1fr; }
+            .modal { margin: 1rem; padding: 1.5rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()"><i class='bx bx-menu'></i></button>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="admin-pic" id="sidebarAdminPic">A</div>
+            <h2>KSS Admin</h2>
+            <p>Management Dashboard</p>
+        </div>
+        <div class="nav-item active" data-panel="dashboard" onclick="switchPanel('dashboard')"><i class='bx bx-grid-alt'></i> Dashboard</div>
+        <div class="nav-item" data-panel="accounts" onclick="switchPanel('accounts')"><i class='bx bx-user-plus'></i> User Accounts</div>
+        <div class="nav-item" data-panel="students" onclick="switchPanel('students')"><i class='bx bx-user'></i> Students</div>
+        <div class="nav-item" data-panel="teachers" onclick="switchPanel('teachers')"><i class='bx bx-chalkboard'></i> Teachers</div>
+        <div class="nav-item" data-panel="announcements" onclick="switchPanel('announcements')"><i class='bx bx-bell'></i> Announcements</div>
+        <div class="nav-item" data-panel="gallery" onclick="switchPanel('gallery')"><i class='bx bx-image'></i> Gallery</div>
+        <div class="nav-item" data-panel="contact" onclick="switchPanel('contact')"><i class='bx bx-phone'></i> Contact Info</div>
+        <div class="nav-item" data-panel="school-info" onclick="switchPanel('school-info')"><i class='bx bx-info-circle'></i> School Info</div>
+        <div class="nav-item" data-panel="admin-profile" onclick="switchPanel('admin-profile')"><i class='bx bx-cog'></i> Admin Profile</div>
+        <div class="nav-item logout" onclick="logout()"><i class='bx bx-log-out'></i> Logout</div>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <h1 id="panelTitle">Dashboard</h1>
+            <div class="user-info"><span>Admin</span><div class="avatar" id="topBarAvatar">A</div></div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div class="panel active" id="panel-dashboard">
+            <div class="cards-grid">
+                <div class="stat-card"><div class="stat-icon">👨‍🎓</div><div class="stat-num" id="stat-students">0</div><div class="stat-label">Students</div></div>
+                <div class="stat-card"><div class="stat-icon">👨‍🏫</div><div class="stat-num" id="stat-teachers">0</div><div class="stat-label">Teachers</div></div>
+                <div class="stat-card"><div class="stat-icon">📢</div><div class="stat-num" id="stat-announcements">0</div><div class="stat-label">Announcements</div></div>
+                <div class="stat-card"><div class="stat-icon">🖼️</div><div class="stat-num" id="stat-gallery">0</div><div class="stat-label">Gallery Items</div></div>
+                <div class="stat-card"><div class="stat-icon">🔑</div><div class="stat-num" id="stat-accounts">0</div><div class="stat-label">User Accounts</div></div>
+            </div>
+            <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:1rem;padding:2rem;margin-top:1rem;">
+                <h3 style="color:#fff;margin-bottom:1rem;">Quick Guide</h3>
+                <p style="color:var(--text-dim);line-height:1.8;">Welcome to the Kavresthali Secondary School Admin Panel.</p>
+                <ul style="color:var(--text-dim);margin-top:1rem;padding-left:1.5rem;line-height:2.2;">
+                    <li><strong>User Accounts</strong> - Create login accounts for students and teachers</li>
+                    <li><strong>Students</strong> - Add, edit, or remove student profiles</li>
+                    <li><strong>Teachers</strong> - Manage faculty information</li>
+                    <li><strong>Announcements</strong> - Post school notices and updates</li>
+                    <li><strong>Gallery</strong> - Manage campus gallery items</li>
+                    <li><strong>Contact</strong> - Update school contact details</li>
+                    <li><strong>School Info</strong> - Edit general school information</li>
+                    <li><strong>Admin Profile</strong> - Change password and profile picture</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- USER ACCOUNTS -->
+        <div class="panel" id="panel-accounts">
+            <div class="panel-header"><h2>User Accounts</h2><button class="btn btn-primary" onclick="openAccountModal()"><i class='bx bx-plus'></i> Create Account</button></div>
+            <div class="table-wrapper" id="accounts-table-container"></div>
+        </div>
+
+        <!-- STUDENTS -->
+        <div class="panel" id="panel-students">
+            <div class="panel-header"><h2>Student Profiles</h2><button class="btn btn-primary" onclick="openStudentModal()"><i class='bx bx-plus'></i> Add Student</button></div>
+            <div class="table-wrapper" id="students-table-container"></div>
+        </div>
+
+        <!-- TEACHERS -->
+        <div class="panel" id="panel-teachers">
+            <div class="panel-header"><h2>Faculty Members</h2><button class="btn btn-primary" onclick="openTeacherModal()"><i class='bx bx-plus'></i> Add Teacher</button></div>
+            <div class="table-wrapper" id="teachers-table-container"></div>
+        </div>
+
+        <!-- ANNOUNCEMENTS -->
+        <div class="panel" id="panel-announcements">
+            <div class="panel-header"><h2>Announcements</h2><button class="btn btn-primary" onclick="openAnnouncementModal()"><i class='bx bx-plus'></i> Add Announcement</button></div>
+            <div class="table-wrapper" id="announcements-table-container"></div>
+        </div>
+
+        <!-- GALLERY -->
+        <div class="panel" id="panel-gallery">
+            <div class="panel-header"><h2>Campus Gallery</h2><button class="btn btn-primary" onclick="openGalleryModal()"><i class='bx bx-plus'></i> Add Item</button></div>
+            <div class="gallery-grid" id="gallery-grid-container"></div>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="panel" id="panel-contact">
+            <div class="panel-header"><h2>Contact Information</h2><button class="btn btn-primary" onclick="saveContact()"><i class='bx bx-save'></i> Save</button></div>
+            <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:1rem;padding:2rem;">
+                <div class="form-row"><div class="form-group"><label>Address</label><input type="text" id="contact-address"></div><div class="form-group"><label>Phone</label><input type="text" id="contact-phone"></div></div>
+                <div class="form-row"><div class="form-group"><label>Email</label><input type="email" id="contact-email"></div><div class="form-group"><label>Office Hours</label><input type="text" id="contact-hours"></div></div>
+                <div class="form-row"><div class="form-group"><label>Headmaster</label><input type="text" id="contact-headmaster"></div><div class="form-group"><label>Coordinates</label><input type="text" id="contact-coordinates"></div></div>
+            </div>
+        </div>
+
+        <!-- SCHOOL INFO -->
+        <div class="panel" id="panel-school-info">
+            <div class="panel-header"><h2>School Information</h2><button class="btn btn-primary" onclick="saveSchoolInfo()"><i class='bx bx-save'></i> Save</button></div>
+            <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:1rem;padding:2rem;">
+                <div class="form-row"><div class="form-group"><label>School Name</label><input type="text" id="info-name"></div><div class="form-group"><label>Founded</label><input type="text" id="info-founded"></div></div>
+                <div class="form-row"><div class="form-group"><label>Founder</label><input type="text" id="info-founder"></div><div class="form-group"><label>Type</label><input type="text" id="info-type"></div></div>
+                <div class="form-row"><div class="form-group"><label>Grades Offered</label><input type="text" id="info-grades"></div><div class="form-group"><label>Total Students</label><input type="text" id="info-students"></div></div>
+                <div class="form-row"><div class="form-group"><label>Headmaster</label><input type="text" id="info-headmaster"></div><div class="form-group"><label>Director</label><input type="text" id="info-director"></div></div>
+                <div class="form-row"><div class="form-group"><label>Ward</label><input type="text" id="info-ward"></div><div class="form-group"><label>Affiliation</label><input type="text" id="info-affiliation"></div></div>
+                <div class="form-group"><label>Motto</label><input type="text" id="info-motto"></div>
+                <div class="form-group"><label>About</label><textarea id="info-about"></textarea></div>
+            </div>
+        </div>
+
+        <!-- ADMIN PROFILE -->
+        <div class="panel" id="panel-admin-profile">
+            <div class="info-card profile-section">
+                <h3><i class='bx bx-user-circle'></i> Admin Profile</h3>
+                <div class="profile-pic-upload">
+                    <div class="pic-preview" id="adminPicPreview">A</div>
+                    <label class="upload-btn" for="adminPicInput"><i class='bx bx-camera'></i> Upload Photo</label>
+                    <input type="file" id="adminPicInput" accept="image/*" onchange="handleAdminPic(event)">
+                </div>
+                <div class="form-group"><label>Username</label><input type="text" value="damodardhakal007" disabled></div>
+                <div class="form-group"><label>Role</label><input type="text" value="Administrator" disabled></div>
+            </div>
+            <div class="info-card profile-section" style="margin-top:1.5rem;">
+                <h3><i class='bx bx-lock-alt'></i> Change Password</h3>
+                <div class="form-group"><label>Current Password</label><input type="password" id="admin-cur-pwd" placeholder="Current password"></div>
+                <div class="form-group"><label>New Password</label><input type="password" id="admin-new-pwd" placeholder="New password"></div>
+                <div class="form-group"><label>Confirm Password</label><input type="password" id="admin-conf-pwd" placeholder="Confirm password"></div>
+                <button class="btn btn-primary" onclick="changeAdminPwd()"><i class='bx bx-check'></i> Update Password</button>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()"><div class="modal" id="modalContent"></div></div>
+    <div class="toast" id="toast"></div>
+
+    <script>
+    if (localStorage.getItem('kss_admin_logged_in') !== 'true') { window.location.href = 'school-admin-login.html'; }
+
+    var KEYS = { students: 'kss_students', teachers: 'kss_teachers', announcements: 'kss_announcements', gallery: 'kss_gallery', contact: 'kss_contact', schoolInfo: 'kss_school_info', accounts: 'kss_user_accounts' };
+
+    function getDefaultStudents() { return [{ id: 1, name: 'Riya Shrestha', grade: 'Grade 10', roll: '07', studentId: 'KSS-2081-10-007', house: 'Bagmati', dob: '2068-04-15 B.S.', guardian: 'Ram Shrestha', contact: '+977-9841XXXXXX', address: 'Kavresthali, KTM', attendance: '96.4%', mathScore: '88', scienceScore: '91', englishScore: '85', nepaliScore: '92', socialScore: '87', computerScore: '90', achievements: 'District Math Olympiad' }]; }
+    function getDefaultTeachers() { return [{ id: 1, name: 'Prahlad Pokhrel', initials: 'PP', subject: 'Headmaster', qualification: 'M.Ed.', experience: '15+ yrs', color: '#007F73' },{ id: 2, name: 'Sita Maharjan', initials: 'SM', subject: 'Mathematics', qualification: 'B.Sc. Math', experience: '10 yrs', color: '#2563eb' },{ id: 3, name: 'Ram Ghimire', initials: 'RG', subject: 'Science', qualification: 'M.Sc. Physics', experience: '12 yrs', color: '#16a34a' },{ id: 4, name: 'Anita Shrestha', initials: 'AS', subject: 'English', qualification: 'B.Ed. English', experience: '8 yrs', color: '#7c3aed' },{ id: 5, name: 'Kiran Bajracharya', initials: 'KB', subject: 'Nepali', qualification: 'M.A. Nepali', experience: '14 yrs', color: '#be185d' },{ id: 6, name: 'Dipak Poudel', initials: 'DP', subject: 'Computer', qualification: 'B.Tech CS', experience: '6 yrs', color: '#0f766e' }]; }
+    function getDefaultAnnouncements() { return [{ id: 1, tag: '📅 Event', title: 'Annual Sports Day 2082', description: 'Inter-house competitions.', date: 'Jestha 30, 2082', type: 'default' },{ id: 2, tag: '📝 Academic', title: 'Terminal Exam Schedule', description: 'Exams from Ashadh 10.', date: 'Jestha 25, 2082', type: 'blue' },{ id: 3, tag: '🚨 Important', title: 'Fee Payment Deadline', description: 'Clear before Ashadh 15.', date: 'Jestha 20, 2082', type: 'red' }]; }
+    function getDefaultGallery() { return [{ id: 1, icon: '🏫', label: 'School Campus', gradient: 'linear-gradient(135deg,#007F73,#00b3a1)' },{ id: 2, icon: '🏆', label: 'Prize Day', gradient: 'linear-gradient(135deg,#b45309,#d97706)' },{ id: 3, icon: '🔬', label: 'Science Lab', gradient: 'linear-gradient(135deg,#065f46,#059669)' },{ id: 4, icon: '💻', label: 'Computer Lab', gradient: 'linear-gradient(135deg,#1e3a5f,#2563eb)' }]; }
+    function getDefaultContact() { return { address: 'Tarakeshwor-2, Kavresthali, Kathmandu', phone: '+977-01-4910XXX', email: 'info@kavresthali.edu.np', hours: 'Sun-Fri: 10AM-4PM', headmaster: 'Prahlad Pokhrel', coordinates: '27.7848N, 85.3010E' }; }
+    function getDefaultSchoolInfo() { return { name: 'Kavresthali Secondary School', founded: '2019 B.S.', founder: 'T.P. Dhakal', type: 'Public', grades: 'ECD-12', students: '644+', headmaster: 'P. Pokhrel', director: 'S. Dhakal', ward: 'Tarakeshwor-2', affiliation: 'Nepal Gov.', motto: 'Mother and Motherland are Greater than Heaven', about: 'Founded in 2019 B.S. by Mr. Tirtha Prasad Dhakal.' }; }
+    function getDefaultAccounts() { return []; }
+
+    function getData(key, defFn) { var s = localStorage.getItem(key); if (s) return JSON.parse(s); var d = defFn(); localStorage.setItem(key, JSON.stringify(d)); return d; }
+    function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+    function getNextId(arr) { return arr.length > 0 ? Math.max.apply(null, arr.map(function(i){return i.id;})) + 1 : 1; }
+    function showToast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block'; setTimeout(function(){ t.style.display = 'none'; }, 3000); }
+    function openModal(html) { document.getElementById('modalContent').innerHTML = html; document.getElementById('modalOverlay').classList.add('show'); }
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+    function switchPanel(panel) {
+        var panels = document.querySelectorAll('.panel'); for (var i=0;i<panels.length;i++) panels[i].classList.remove('active');
+        var navs = document.querySelectorAll('.nav-item'); for (var i=0;i<navs.length;i++) navs[i].classList.remove('active');
+        document.getElementById('panel-' + panel).classList.add('active');
+        var nav = document.querySelector('[data-panel="'+panel+'"]'); if(nav) nav.classList.add('active');
+        var titles = {'dashboard':'Dashboard','accounts':'User Accounts','students':'Students','teachers':'Teachers','announcements':'Announcements','gallery':'Gallery','contact':'Contact Info','school-info':'School Info','admin-profile':'Admin Profile'};
+        document.getElementById('panelTitle').textContent = titles[panel] || 'Dashboard';
+        if(panel==='accounts') renderAccounts();
+        if(panel==='students') renderStudents();
+        if(panel==='teachers') renderTeachers();
+        if(panel==='announcements') renderAnnouncements();
+        if(panel==='gallery') renderGallery();
+        if(panel==='contact') loadContact();
+        if(panel==='school-info') loadSchoolInfo();
+        if(panel==='dashboard') updateDashboard();
+        document.getElementById('sidebar').classList.remove('open');
+    }
+
+    function logout() { localStorage.removeItem('kss_admin_logged_in'); window.location.href = 'school-admin-login.html'; }
+
+    // Admin profile pic
+    function loadAdminPic() {
+        var pic = localStorage.getItem('kss_admin_profile_pic');
+        if (pic) {
+            document.getElementById('sidebarAdminPic').innerHTML = '<img src="'+pic+'" alt="A">';
+            document.getElementById('topBarAvatar').innerHTML = '<img src="'+pic+'" alt="A">';
+            document.getElementById('adminPicPreview').innerHTML = '<img src="'+pic+'" alt="A">';
+        }
+    }
+    function handleAdminPic(e) {
+        var f = e.target.files[0]; if(!f) return;
+        if(f.size > 500000) { showToast('Max 500KB!'); return; }
+        var r = new FileReader();
+        r.onload = function(ev) {
+            var d = ev.target.result;
+            localStorage.setItem('kss_admin_profile_pic', d);
+            document.getElementById('sidebarAdminPic').innerHTML = '<img src="'+d+'" alt="A">';
+            document.getElementById('topBarAvatar').innerHTML = '<img src="'+d+'" alt="A">';
+            document.getElementById('adminPicPreview').innerHTML = '<img src="'+d+'" alt="A">';
+            showToast('Profile picture updated!');
+        };
+        r.readAsDataURL(f);
+    }
+    function changeAdminPwd() {
+        var cur = document.getElementById('admin-cur-pwd').value;
+        var np = document.getElementById('admin-new-pwd').value;
+        var cp = document.getElementById('admin-conf-pwd').value;
+        if(!cur||!np||!cp) { showToast('Fill all fields!'); return; }
+        if(np !== cp) { showToast('Passwords do not match!'); return; }
+        if(np.length < 4) { showToast('Min 4 characters!'); return; }
+        var stored = localStorage.getItem('kss_admin_password') || 'damodardhakal007';
+        if(cur !== stored) { showToast('Current password incorrect!'); return; }
+        localStorage.setItem('kss_admin_password', np);
+        document.getElementById('admin-cur-pwd').value = '';
+        document.getElementById('admin-new-pwd').value = '';
+        document.getElementById('admin-conf-pwd').value = '';
+        showToast('Password changed!');
+    }
+
+    // Dashboard
+    function updateDashboard() {
+        document.getElementById('stat-students').textContent = getData(KEYS.students, getDefaultStudents).length;
+        document.getElementById('stat-teachers').textContent = getData(KEYS.teachers, getDefaultTeachers).length;
+        document.getElementById('stat-announcements').textContent = getData(KEYS.announcements, getDefaultAnnouncements).length;
+        document.getElementById('stat-gallery').textContent = getData(KEYS.gallery, getDefaultGallery).length;
+        document.getElementById('stat-accounts').textContent = getData(KEYS.accounts, getDefaultAccounts).length;
+    }
+
+    // ===== ACCOUNTS =====
+    function renderAccounts() {
+        var accs = getData(KEYS.accounts, getDefaultAccounts);
+        var c = document.getElementById('accounts-table-container');
+        if(accs.length===0) { c.innerHTML = '<div class="empty-state"><i class="bx bx-user-plus"></i><p>No accounts yet. Create student/teacher login accounts.</p></div>'; return; }
+        var h = '<table class="data-table"><thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Info</th><th>Actions</th></tr></thead><tbody>';
+        for(var i=0;i<accs.length;i++) {
+            var a = accs[i];
+            var info = a.role==='student' ? (a.grade||'--') : (a.subject||'--');
+            h += '<tr><td><strong>'+a.username+'</strong></td><td>'+(a.fullName||'--')+'</td><td><span class="role-badge '+a.role+'">'+a.role+'</span></td><td>'+info+'</td><td class="actions"><button class="btn btn-primary btn-sm" onclick="editAccount('+a.id+')"><i class="bx bx-edit"></i></button><button class="btn btn-danger btn-sm" onclick="deleteAccount('+a.id+')"><i class="bx bx-trash"></i></button></td></tr>';
+        }
+        h += '</tbody></table>';
+        c.innerHTML = h;
+    }
+
+    function openAccountModal(acc) {
+        var isE = acc ? true : false;
+        var a = acc || {username:'',fullName:'',role:'student',password:'',subject:'',grade:'',linkedStudentId:'',linkedTeacherId:''};
+        var eid = isE ? a.id : 'null';
+        var sts = getData(KEYS.students, getDefaultStudents);
+        var tch = getData(KEYS.teachers, getDefaultTeachers);
+        var sOpt = '<option value="">-- None --</option>';
+        for(var i=0;i<sts.length;i++) { sOpt += '<option value="'+sts[i].id+'"'+(a.linkedStudentId==sts[i].id?' selected':'')+'>'+sts[i].name+'</option>'; }
+        var tOpt = '<option value="">-- None --</option>';
+        for(var i=0;i<tch.length;i++) { tOpt += '<option value="'+tch[i].id+'"'+(a.linkedTeacherId==tch[i].id?' selected':'')+'>'+tch[i].name+'</option>'; }
+
+        openModal('<h3>'+(isE?'Edit':'Create')+' User Account</h3>'+
+            '<div class="form-group"><label>Username</label><input type="text" id="acc-user" value="'+a.username+'" placeholder="login username"'+(isE?' disabled style="opacity:0.6"':'')+'></div>'+
+            '<div class="form-group"><label>Full Name</label><input type="text" id="acc-name" value="'+(a.fullName||'')+'" placeholder="Full name"></div>'+
+            '<div class="form-row"><div class="form-group"><label>Role</label><select id="acc-role" onchange="togAccFields()"><option value="student"'+(a.role==='student'?' selected':'')+'>Student</option><option value="teacher"'+(a.role==='teacher'?' selected':'')+'>Teacher</option></select></div><div class="form-group"><label>Password</label><input type="text" id="acc-pwd" value="" placeholder="'+(isE?'Leave blank to keep':'Set password')+'"></div></div>'+
+            '<div id="acc-stu-fields" style="'+(a.role==='teacher'?'display:none':'')+'"><div class="form-row"><div class="form-group"><label>Grade</label><input type="text" id="acc-grade" value="'+(a.grade||'')+'" placeholder="Grade 10"></div><div class="form-group"><label>Link Student</label><select id="acc-link-stu">'+sOpt+'</select></div></div></div>'+
+            '<div id="acc-tch-fields" style="'+(a.role==='student'?'display:none':'')+'"><div class="form-row"><div class="form-group"><label>Subject</label><input type="text" id="acc-subject" value="'+(a.subject||'')+'" placeholder="Mathematics"></div><div class="form-group"><label>Link Teacher</label><select id="acc-link-tch">'+tOpt+'</select></div></div></div>'+
+            '<div class="modal-actions"><button class="btn btn-cancel" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveAccount('+eid+')">'+(isE?'Update':'Create')+'</button></div>'
+        );
+    }
+
+    function togAccFields() {
+        var r = document.getElementById('acc-role').value;
+        document.getElementById('acc-stu-fields').style.display = r==='student'?'block':'none';
+        document.getElementById('acc-tch-fields').style.display = r==='teacher'?'block':'none';
+    }
+
+    function saveAccount(eid) {
+        var accs = getData(KEYS.accounts, getDefaultAccounts);
+        var un = document.getElementById('acc-user').value.trim();
+        var fn = document.getElementById('acc-name').value.trim();
+        var role = document.getElementById('acc-role').value;
+        var pwd = document.getElementById('acc-pwd').value;
+        var grade = document.getElementById('acc-grade')?document.getElementById('acc-grade').value:'';
+        var subject = document.getElementById('acc-subject')?document.getElementById('acc-subject').value:'';
+        var linkStu = document.getElementById('acc-link-stu')?document.getElementById('acc-link-stu').value:'';
+        var linkTch = document.getElementById('acc-link-tch')?document.getElementById('acc-link-tch').value:'';
+        if(!un) { showToast('Username required!'); return; }
+        if(!eid && !pwd) { showToast('Password required!'); return; }
+        if(!eid) { for(var i=0;i<accs.length;i++) { if(accs[i].username===un) { showToast('Username exists!'); return; } } }
+        if(eid && eid !== 'null') {
+            for(var i=0;i<accs.length;i++) { if(accs[i].id===eid) { accs[i].fullName=fn; accs[i].role=role; if(pwd)accs[i].password=pwd; accs[i].grade=grade; accs[i].subject=subject; accs[i].linkedStudentId=linkStu?parseInt(linkStu):''; accs[i].linkedTeacherId=linkTch?parseInt(linkTch):''; break; } }
+        } else {
+            accs.push({id:getNextId(accs),username:un,fullName:fn,role:role,password:pwd,grade:grade,subject:subject,linkedStudentId:linkStu?parseInt(linkStu):'',linkedTeacherId:linkTch?parseInt(linkTch):''});
+        }
+        saveData(KEYS.accounts,accs); closeModal(); renderAccounts();
+        showToast(eid?'Account updated!':'Account created!');
+    }
+
+    function editAccount(id) { var accs=getData(KEYS.accounts,getDefaultAccounts); for(var i=0;i<accs.length;i++){if(accs[i].id===id){openAccountModal(accs[i]);return;}} }
+    function deleteAccount(id) { if(!confirm('Delete this account?'))return; var accs=getData(KEYS.accounts,getDefaultAccounts); accs=accs.filter(function(a){return a.id!==id;}); saveData(KEYS.accounts,accs); renderAccounts(); showToast('Account deleted!'); }
+
+    // ===== STUDENTS =====
+    function renderStudents() {
+        var students = getData(KEYS.students, getDefaultStudents);
+        var c = document.getElementById('students-table-container');
+        if(students.length===0){c.innerHTML='<div class="empty-state"><i class="bx bx-user"></i><p>No students yet.</p></div>';return;}
+        var h='<table class="data-table"><thead><tr><th>Name</th><th>Grade</th><th>Roll</th><th>ID</th><th>Attendance</th><th>Actions</th></tr></thead><tbody>';
+        for(var i=0;i<students.length;i++){var s=students[i];h+='<tr><td>'+s.name+'</td><td>'+s.grade+'</td><td>'+s.roll+'</td><td>'+s.studentId+'</td><td>'+s.attendance+'</td><td class="actions"><button class="btn btn-primary btn-sm" onclick="editStudent('+s.id+')"><i class="bx bx-edit"></i></button><button class="btn btn-danger btn-sm" onclick="deleteStudent('+s.id+')"><i class="bx bx-trash"></i></button></td></tr>';}
+        h+='</tbody></table>';c.innerHTML=h;
+    }
+    function openStudentModal(student) {
+        var isE=student?true:false; var s=student||{name:'',grade:'',roll:'',studentId:'',house:'',dob:'',guardian:'',contact:'',address:'',attendance:'',mathScore:'',scienceScore:'',englishScore:'',nepaliScore:'',socialScore:'',computerScore:'',achievements:''};
+        var eid=isE?s.id:'null';
+        openModal('<h3>'+(isE?'Edit':'Add')+' Student</h3>'+
+            '<div class="form-row"><div class="form-group"><label>Name</label><input type="text" id="s-name" value="'+s.name+'"></div><div class="form-group"><label>Grade</label><input type="text" id="s-grade" value="'+s.grade+'"></div></div>'+
+            '<div class="form-row"><div class="form-group"><label>Roll</label><input type="text" id="s-roll" value="'+s.roll+'"></div><div class="form-group"><label>Student ID</label><input type="text" id="s-id" value="'+s.studentId+'"></div></div>'+
+            '<div class="form-row"><div class="form-group"><label>House</label><input type="text" id="s-house" value="'+s.house+'"></div><div class="form-group"><label>DOB</label><input type="text" id="s-dob" value="'+s.dob+'"></div></div>'+
+            '<div class="form-row"><div class="form-group"><label>Guardian</label><input type="text" id="s-guardian" value="'+s.guardian+'"></div><div class="form-group"><label>Contact</label><input type="text" id="s-contact" value="'+s.contact+'"></div></div>'+
+            '<div class="form-row"><div class="form-group"><label>Address</label><input type="text" id="s-address" value="'+s.address+'"></div><div class="form-group"><label>Attendance</label><input type="text" id="s-attendance" value="'+s.attendance+'"></div></div>'+
+            '<div class="form-row"><div class="form-group"><label>Math</label><input type="text" id="s-math" value="'+s.mathScore+'"></div><div class="form-group"><label>Science</label><input type="text" id="s-science" value="'+s.scienceScore+'"></div></div>'+
+            '<div class="form-row"><div class="form-group"><label>English</label><input type="text" id="s-english" value="'+s.englishScore+'"></div><div class="form-group"><label>Nepali</label><input type="text" id="s-nepali" value="'+s.nepaliScore+'"></div></div>'+
+            '<div class="form-row"><div class="form-group"><label>Social</label><input type="text" id="s-social" value="'+s.socialScore+'"></div><div class="form-group"><label>Computer</label><input type="text" id="s-computer" value="'+s.computerScore+'"></div></div>'+
+            '<div class="form-group"><label>Achievements</label><input type="text" id="s-achievements" value="'+s.achievements+'"></div>'+
+            '<div class="modal-actions"><button class="btn btn-cancel" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveStudent('+eid+')">'+(isE?'Update':'Add')+'</button></div>');
+    }
+    function saveStudent(eid) {
+        var students=getData(KEYS.students,getDefaultStudents);
+        var d={name:document.getElementById('s-name').value,grade:document.getElementById('s-grade').value,roll:document.getElementById('s-roll').value,studentId:document.getElementById('s-id').value,house:document.getElementById('s-house').value,dob:document.getElementById('s-dob').value,guardian:document.getElementById('s-guardian').value,contact:document.getElementById('s-contact').value,address:document.getElementById('s-address').value,attendance:document.getElementById('s-attendance').value,mathScore:document.getElementById('s-math').value,scienceScore:document.getElementById('s-science').value,englishScore:document.getElementById('s-english').value,nepaliScore:document.getElementById('s-nepali').value,socialScore:document.getElementById('s-social').value,computerScore:document.getElementById('s-computer').value,achievements:document.getElementById('s-achievements').value};
+        if(!d.name){showToast('Name required!');return;}
+        if(eid&&eid!=='null'){for(var i=0;i<students.length;i++){if(students[i].id===eid){for(var k in d)students[i][k]=d[k];break;}}}else{d.id=getNextId(students);students.push(d);}
+        saveData(KEYS.students,students);closeModal();renderStudents();showToast(eid?'Updated!':'Added!');
+    }
+    function editStudent(id){var students=getData(KEYS.students,getDefaultStudents);for(var i=0;i<students.length;i++){if(students[i].id===id){openStudentModal(students[i]);return;}}}
+    function deleteStudent(id){if(!confirm('Delete?'))return;var students=getData(KEYS.students,getDefaultStudents);students=students.filter(function(s){return s.id!==id;});saveData(KEYS.students,students);renderStudents();showToast('Deleted!');}
+
+    // ===== TEACHERS =====
+    function renderTeachers() {
+        var teachers=getData(KEYS.teachers,getDefaultTeachers);var c=document.getElementById('teachers-table-container');
+        if(teachers.length===0){c.innerHTML='<div class="empty-state"><i class="bx bx-chalkboard"></i><p>No teachers yet.</p></div>';return;}
+        var h='<table class="data-table"><thead><tr><th>Name</th><th>Subject</th><th>Qualification</th><th>Experience</th><th>Actions</th></tr></thead><tbody>';
+        for(var i=0;i<teachers.length;i++){var t=teachers[i];h+='<tr><td>'+t.name+'</td><td>'+t.subject+'</td><td>'+t.qualification+'</td><td>'+t.experience+'</td><td class="actions"><button class="btn btn-primary btn-sm" onclick="editTeacher('+t.id+')"><i class="bx bx-edit"></i></button><button class="btn btn-danger btn-sm" onclick="deleteTeacher('+t.id+')"><i class="bx bx-trash"></i></button></td></tr>';}
+        h+='</tbody></table>';c.innerHTML=h;
+    }
+    function openTeacherModal(teacher) {
+        var isE=teacher?true:false;var t=teacher||{name:'',initials:'',subject:'',qualification:'',experience:'',color:'#007F73'};var eid=isE?t.id:'null';
+        openModal('<h3>'+(isE?'Edit':'Add')+' Teacher</h3>'+
+            '<div class="form-row"><div class="form-group"><label>Name</label><input type="text" id="t-name" value="'+t.name+'"></div><div class="form-group"><label>Initials</label><input type="text" id="t-initials" value="'+t.initials+'" maxlength="3"></div></div>'+
+            '<div class="form-row"><div class="form-group"><label>Subject</label><input type="text" id="t-subject" value="'+t.subject+'"></div><div class="form-group"><label>Experience</label><input type="text" id="t-experience" value="'+t.experience+'"></div></div>'+
+            '<div class="form-group"><label>Qualification</label><input type="text" id="t-qualification" value="'+t.qualification+'"></div>'+
+            '<div class="form-group"><label>Color</label><input type="color" id="t-color" value="'+t.color+'" style="height:40px;"></div>'+
+            '<div class="modal-actions"><button class="btn btn-cancel" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveTeacher('+eid+')">'+(isE?'Update':'Add')+'</button></div>');
+    }
+    function saveTeacher(eid) {
+        var teachers=getData(KEYS.teachers,getDefaultTeachers);
+        var d={name:document.getElementById('t-name').value,initials:document.getElementById('t-initials').value,subject:document.getElementById('t-subject').value,qualification:document.getElementById('t-qualification').value,experience:document.getElementById('t-experience').value,color:document.getElementById('t-color').value};
+        if(!d.name){showToast('Name required!');return;}
+        if(eid&&eid!=='null'){for(var i=0;i<teachers.length;i++){if(teachers[i].id===eid){for(var k in d)teachers[i][k]=d[k];break;}}}else{d.id=getNextId(teachers);teachers.push(d);}
+        saveData(KEYS.teachers,teachers);closeModal();renderTeachers();showToast(eid?'Updated!':'Added!');
+    }
+    function editTeacher(id){var teachers=getData(KEYS.teachers,getDefaultTeachers);for(var i=0;i<teachers.length;i++){if(teachers[i].id===id){openTeacherModal(teachers[i]);return;}}}
+    function deleteTeacher(id){if(!confirm('Delete?'))return;var teachers=getData(KEYS.teachers,getDefaultTeachers);teachers=teachers.filter(function(t){return t.id!==id;});saveData(KEYS.teachers,teachers);renderTeachers();showToast('Deleted!');}
+
+    // ===== ANNOUNCEMENTS =====
+    function renderAnnouncements() {
+        var anns=getData(KEYS.announcements,getDefaultAnnouncements);var c=document.getElementById('announcements-table-container');
+        if(anns.length===0){c.innerHTML='<div class="empty-state"><i class="bx bx-bell"></i><p>No announcements.</p></div>';return;}
+        var h='<table class="data-table"><thead><tr><th>Tag</th><th>Title</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
+        for(var i=0;i<anns.length;i++){var a=anns[i];h+='<tr><td>'+a.tag+'</td><td>'+a.title+'</td><td>'+a.date+'</td><td class="actions"><button class="btn btn-primary btn-sm" onclick="editAnnouncement('+a.id+')"><i class="bx bx-edit"></i></button><button class="btn btn-danger btn-sm" onclick="deleteAnnouncement('+a.id+')"><i class="bx bx-trash"></i></button></td></tr>';}
+        h+='</tbody></table>';c.innerHTML=h;
+    }
+    function openAnnouncementModal(ann) {
+        var isE=ann?true:false;var a=ann||{tag:'',title:'',description:'',date:'',type:'default'};var eid=isE?a.id:'null';
+        openModal('<h3>'+(isE?'Edit':'Add')+' Announcement</h3>'+
+            '<div class="form-row"><div class="form-group"><label>Tag</label><input type="text" id="a-tag" value="'+a.tag+'" placeholder="📅 Event"></div><div class="form-group"><label>Type</label><select id="a-type"><option value="default"'+(a.type==='default'?' selected':'')+'>Green</option><option value="blue"'+(a.type==='blue'?' selected':'')+'>Blue</option><option value="red"'+(a.type==='red'?' selected':'')+'>Red</option></select></div></div>'+
+            '<div class="form-group"><label>Title</label><input type="text" id="a-title" value="'+a.title+'"></div>'+
+            '<div class="form-group"><label>Description</label><textarea id="a-desc">'+a.description+'</textarea></div>'+
+            '<div class="form-group"><label>Date</label><input type="text" id="a-date" value="'+a.date+'"></div>'+
+            '<div class="modal-actions"><button class="btn btn-cancel" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveAnnouncement('+eid+')">'+(isE?'Update':'Add')+'</button></div>');
+    }
+    function saveAnnouncement(eid) {
+        var anns=getData(KEYS.announcements,getDefaultAnnouncements);
+        var d={tag:document.getElementById('a-tag').value,title:document.getElementById('a-title').value,description:document.getElementById('a-desc').value,date:document.getElementById('a-date').value,type:document.getElementById('a-type').value};
+        if(!d.title){showToast('Title required!');return;}
+        if(eid&&eid!=='null'){for(var i=0;i<anns.length;i++){if(anns[i].id===eid){for(var k in d)anns[i][k]=d[k];break;}}}else{d.id=getNextId(anns);anns.push(d);}
+        saveData(KEYS.announcements,anns);closeModal();renderAnnouncements();showToast(eid?'Updated!':'Added!');
+    }
+    function editAnnouncement(id){var anns=getData(KEYS.announcements,getDefaultAnnouncements);for(var i=0;i<anns.length;i++){if(anns[i].id===id){openAnnouncementModal(anns[i]);return;}}}
+    function deleteAnnouncement(id){if(!confirm('Delete?'))return;var anns=getData(KEYS.announcements,getDefaultAnnouncements);anns=anns.filter(function(a){return a.id!==id;});saveData(KEYS.announcements,anns);renderAnnouncements();showToast('Deleted!');}
+
+    // ===== GALLERY =====
+    function renderGallery() {
+        var gal=getData(KEYS.gallery,getDefaultGallery);var c=document.getElementById('gallery-grid-container');
+        if(gal.length===0){c.innerHTML='<div class="empty-state"><i class="bx bx-image"></i><p>No items.</p></div>';return;}
+        var h='';for(var i=0;i<gal.length;i++){var g=gal[i];h+='<div class="gallery-item" style="background:'+g.gradient+';"><div class="item-actions"><button class="btn-icon edit" onclick="editGallery('+g.id+')"><i class="bx bx-edit"></i></button><button class="btn-icon delete" onclick="deleteGallery('+g.id+')"><i class="bx bx-trash"></i></button></div><div class="gal-icon">'+g.icon+'</div><div class="gal-label">'+g.label+'</div></div>';}
+        c.innerHTML=h;
+    }
+    function openGalleryModal(item) {
+        var isE=item?true:false;var g=item||{icon:'',label:'',gradient:'linear-gradient(135deg,#007F73,#00b3a1)'};var eid=isE?g.id:'null';
+        openModal('<h3>'+(isE?'Edit':'Add')+' Gallery Item</h3>'+
+            '<div class="form-group"><label>Icon (emoji)</label><input type="text" id="g-icon" value="'+g.icon+'"></div>'+
+            '<div class="form-group"><label>Label</label><input type="text" id="g-label" value="'+g.label+'"></div>'+
+            '<div class="form-group"><label>Gradient</label><input type="text" id="g-gradient" value="'+g.gradient+'"></div>'+
+            '<div class="modal-actions"><button class="btn btn-cancel" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveGallery('+eid+')">'+(isE?'Update':'Add')+'</button></div>');
+    }
+    function saveGallery(eid) {
+        var gal=getData(KEYS.gallery,getDefaultGallery);
+        var d={icon:document.getElementById('g-icon').value,label:document.getElementById('g-label').value,gradient:document.getElementById('g-gradient').value};
+        if(!d.label){showToast('Label required!');return;}
+        if(eid&&eid!=='null'){for(var i=0;i<gal.length;i++){if(gal[i].id===eid){for(var k in d)gal[i][k]=d[k];break;}}}else{d.id=getNextId(gal);gal.push(d);}
+        saveData(KEYS.gallery,gal);closeModal();renderGallery();showToast(eid?'Updated!':'Added!');
+    }
+    function editGallery(id){var gal=getData(KEYS.gallery,getDefaultGallery);for(var i=0;i<gal.length;i++){if(gal[i].id===id){openGalleryModal(gal[i]);return;}}}
+    function deleteGallery(id){if(!confirm('Delete?'))return;var gal=getData(KEYS.gallery,getDefaultGallery);gal=gal.filter(function(g){return g.id!==id;});saveData(KEYS.gallery,gal);renderGallery();showToast('Deleted!');}
+
+    // ===== CONTACT =====
+    function loadContact() {
+        var c=getData(KEYS.contact,getDefaultContact);
+        document.getElementById('contact-address').value=c.address||'';
+        document.getElementById('contact-phone').value=c.phone||'';
+        document.getElementById('contact-email').value=c.email||'';
+        document.getElementById('contact-hours').value=c.hours||'';
+        document.getElementById('contact-headmaster').value=c.headmaster||'';
+        document.getElementById('contact-coordinates').value=c.coordinates||'';
+    }
+    function saveContact() {
+        var c={address:document.getElementById('contact-address').value,phone:document.getElementById('contact-phone').value,email:document.getElementById('contact-email').value,hours:document.getElementById('contact-hours').value,headmaster:document.getElementById('contact-headmaster').value,coordinates:document.getElementById('contact-coordinates').value};
+        saveData(KEYS.contact,c);showToast('Contact saved!');
+    }
+
+    // ===== SCHOOL INFO =====
+    function loadSchoolInfo() {
+        var info=getData(KEYS.schoolInfo,getDefaultSchoolInfo);
+        document.getElementById('info-name').value=info.name||'';
+        document.getElementById('info-founded').value=info.founded||'';
+        document.getElementById('info-founder').value=info.founder||'';
+        document.getElementById('info-type').value=info.type||'';
+        document.getElementById('info-grades').value=info.grades||'';
+        document.getElementById('info-students').value=info.students||'';
+        document.getElementById('info-headmaster').value=info.headmaster||'';
+        document.getElementById('info-director').value=info.director||'';
+        document.getElementById('info-ward').value=info.ward||'';
+        document.getElementById('info-affiliation').value=info.affiliation||'';
+        document.getElementById('info-motto').value=info.motto||'';
+        document.getElementById('info-about').value=info.about||'';
+    }
+    function saveSchoolInfo() {
+        var info={name:document.getElementById('info-name').value,founded:document.getElementById('info-founded').value,founder:document.getElementById('info-founder').value,type:document.getElementById('info-type').value,grades:document.getElementById('info-grades').value,students:document.getElementById('info-students').value,headmaster:document.getElementById('info-headmaster').value,director:document.getElementById('info-director').value,ward:document.getElementById('info-ward').value,affiliation:document.getElementById('info-affiliation').value,motto:document.getElementById('info-motto').value,about:document.getElementById('info-about').value};
+        saveData(KEYS.schoolInfo,info);showToast('School info saved!');
+    }
+
+    // Init
+    updateDashboard();
+    loadAdminPic();
+    </script>
+</body>
+</html>
