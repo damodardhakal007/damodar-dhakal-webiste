@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Shukdev Dhakal</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- HEADER SECTION -->
+    <header class="header">
+        <a href="index.html#home" class="logo">Shukdev dhakal</a>
+        <i class='bx bx-menu' id="menu-icon"></i>
+        <nav class="navbar">
+            <a href="index.html#home">Home</a>
+            <a href="about.html">About</a>
+            <a href="documents.html">Documents</a>
+            <a href="contact-me.html">Contact Me</a>
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <a href="login.html" class="nav-login-btn"><i class='bx bx-user'></i> Login</a>
+        </nav>
+    </header>
+
+    <!-- LOGIN SECTION -->
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-avatar">
+                    <img src="assets/Profile.jpeg" alt="Shukdev Dhakal">
+                </div>
+                <h2>Admin <span>Portal</span></h2>
+                <p class="auth-sub">Sign in to manage documents, study notes, and publish pages.</p>
+
+                <div id="authAlert" class="auth-alert" style="display:none;"></div>
+
+                <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+                    <div class="auth-group">
+                        <label for="username"><i class='bx bx-user'></i> Username</label>
+                        <input type="text" id="username" placeholder="Enter username (e.g. admin)" required autocomplete="username" value="admin">
+                    </div>
+
+                    <div class="auth-group">
+                        <label for="password"><i class='bx bx-lock-alt'></i> Password</label>
+                        <div class="password-input-wrap">
+                            <input type="password" id="password" placeholder="Enter password" required autocomplete="current-password" value="admin123">
+                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility()" aria-label="Toggle password visibility">
+                                <i class='bx bx-show' id="toggleEye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="auth-options">
+                        <label class="remember-label">
+                            <input type="checkbox" id="rememberMe" checked> Remember me
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn auth-submit-btn">
+                        <i class='bx bx-log-in-circle'></i> Sign In to Dashboard
+                    </button>
+                </form>
+
+                <div class="credentials-hint">
+                    <div class="hint-header"><i class='bx bx-info-circle'></i> Default Login Credentials</div>
+                    <div class="hint-body">
+                        <div><strong>Username:</strong> <code>admin</code></div>
+                        <div><strong>Password:</strong> <code>admin123</code></div>
+                    </div>
+                    <small>You can change the password anytime inside the Admin Dashboard.</small>
+                </div>
+
+                <div class="auth-footer-link">
+                    <a href="index.html"><i class='bx bx-arrow-back'></i> Back to Homepage</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER SECTION -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="documents.html">Documents</a>
+            <a href="contact-me.html">Contact</a>
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <a href="privacy-policy-daure.html">Privacy - Daure</a>
+            <a href="terms.html">Terms & Agreement</a>
+            <a href="login.html">Admin Login</a>
+        </div>
+        <div class="social">
+            <a href="https://www.facebook.com/shukdev.dhakal.3" target="_blank"><i class='bx bxl-facebook'></i></a>
+            <a href="https://instagram.com/shukdevdhakal007" target="_blank"><i class='bx bxl-instagram'></i></a>
+            <a href="https://play.google.com/store/apps/details?id=com.bank.damodardhakal&hl=ne" target="_blank"><i class='bx bxl-play-store'></i></a>
+        </div>
+        <p class="copyright">© Damodar Dhakal - All Rights Reserved</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="cms.js"></script>
+    <script>
+        // If already logged in, redirect straight to admin panel
+        if (window.CMS && window.CMS.isAuthenticated()) {
+            window.location.href = 'admin.html';
+        }
+
+        function togglePasswordVisibility() {
+            const passInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('toggleEye');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                eyeIcon.classList.replace('bx-show', 'bx-hide');
+            } else {
+                passInput.type = 'password';
+                eyeIcon.classList.replace('bx-hide', 'bx-show');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('authAlert');
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            const res = window.CMS.login(user, pass);
+            if (res.success) {
+                alertBox.className = 'auth-alert success';
+                alertBox.innerHTML = "<i class='bx bx-check-circle'></i> " + res.message + " Redirecting...";
+                alertBox.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 600);
+            } else {
+                alertBox.className = 'auth-alert error';
+                alertBox.innerHTML = "<i class='bx bx-error-circle'></i> " + res.message;
+                alertBox.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+
+</html>

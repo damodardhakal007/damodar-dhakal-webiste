@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Shukdev Dhakal</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="admin-body">
+    <!-- CMS Auth Guard -->
+    <script src="cms.js"></script>
+    <script>
+        if (!window.CMS || !window.CMS.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-user-avatar">
+                    <img src="assets/Profile.jpeg" alt="Admin">
+                </div>
+                <h3>Shukdev Dhakal</h3>
+                <span class="role-badge"><i class='bx bx-check-shield'></i> Admin Portal</span>
+            </div>
+
+            <nav class="admin-nav">
+                <a href="#overview" class="admin-nav-item active" onclick="switchTab('overview', this)">
+                    <i class='bx bx-grid-alt'></i> Overview
+                </a>
+                <a href="#documents" class="admin-nav-item" onclick="switchTab('documents', this)">
+                    <i class='bx bx-file'></i> Documents
+                    <span class="badge" id="sidebarDocCount">0</span>
+                </a>
+                <a href="#pages" class="admin-nav-item" onclick="switchTab('pages', this)">
+                    <i class='bx bx-news'></i> Pages & Articles
+                    <span class="badge" id="sidebarPageCount">0</span>
+                </a>
+                <a href="#settings" class="admin-nav-item" onclick="switchTab('settings', this)">
+                    <i class='bx bx-cog'></i> Settings & Backup
+                </a>
+                <hr class="sidebar-divider">
+                <a href="index.html" class="admin-nav-item">
+                    <i class='bx bx-globe'></i> View Website
+                </a>
+                <a href="documents.html" class="admin-nav-item">
+                    <i class='bx bx-folder-open'></i> Public Documents
+                </a>
+                <a href="javascript:void(0)" class="admin-nav-item logout" onclick="handleLogout()">
+                    <i class='bx bx-log-out'></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="admin-main">
+            <!-- Topbar -->
+            <header class="admin-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
+                        <i class='bx bx-menu'></i>
+                    </button>
+                    <h2 id="topbarTitle">Dashboard Overview</h2>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-sm" onclick="openDocModal()"><i class='bx bx-plus-circle'></i> Add Document</button>
+                    <button class="btn btn-sm btn-outline" onclick="openPageModal()"><i class='bx bx-edit'></i> New Page</button>
+                    <button class="btn btn-sm btn-logout" onclick="handleLogout()"><i class='bx bx-log-out'></i></button>
+                </div>
+            </header>
+
+            <div class="admin-content-container">
+                <!-- Notifications Banner -->
+                <div id="adminNotice" class="admin-notice" style="display:none;"></div>
+
+                <!-- TAB 1: OVERVIEW -->
+                <section id="tab-overview" class="admin-tab active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon teal"><i class='bx bx-file'></i></div>
+                            <div class="stat-info">
+                                <h3 id="statDocCount">0</h3>
+                                <p>Uploaded Documents</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon amber"><i class='bx bx-news'></i></div>
+                            <div class="stat-info">
+                                <h3 id="statPageCount">0</h3>
+                                <p>Custom Pages Published</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green"><i class='bx bx-user-check'></i></div>
+                            <div class="stat-info">
+                                <h3>Active</h3>
+                                <p>Admin Status</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple"><i class='bx bx-cloud-download'></i></div>
+                            <div class="stat-info">
+                                <h3>Local + Sync</h3>
+                                <p>Storage System</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-two-col">
+                        <!-- Recent Documents -->
+                        <div class="admin-card">
+                            <div class="card-header">
+                                <h3><i class='bx bx-file'></i> Recent Documents</h3>
+                                <button class="btn btn-xs" onclick="switchTab('documents')">View All</button>
+                            </div>
+                            <div id="overviewDocsList" class="card-list"></div>
+                        </div>
+
+                        <!-- Recent Pages -->
+                        <div class="admin-card">
+                            <div class="card-header">
+                                <h3><i class='bx bx-news'></i> Recent Pages</h3>
+                                <button class="btn btn-xs" onclick="switchTab('pages')">View All</button>
+                            </div>
+                            <div id="overviewPagesList" class="card-list"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: DOCUMENTS -->
+                <section id="tab-documents" class="admin-tab">
+                    <div class="tab-header">
+                        <div>
+                            <h2>Document Management</h2>
+                            <p>Upload study notes, question papers, syllabus, and academic resources for students.</p>
+                        </div>
+                        <button class="btn" onclick="openDocModal()"><i class='bx bx-upload'></i> Upload Document</button>
+                    </div>
+
+                    <div class="table-filters">
+                        <div class="search-input-wrap">
+                            <i class='bx bx-search'></i>
+                            <input type="text" id="docSearch" placeholder="Search documents by title or subject..." oninput="renderDocumentsTable()">
+                        </div>
+                        <select id="docCategoryFilter" onchange="renderDocumentsTable()">
+                            <option value="All">All Categories</option>
+                            <option value="Science">Science</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Nepali">Nepali</option>
+                            <option value="English">English</option>
+                            <option value="Notice">Notice / School</option>
+                            <option value="General">General</option>
+                        </select>
+                    </div>
+
+                    <div class="admin-card table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Document Title</th>
+                                    <th>Category</th>
+                                    <th>Grade / Level</th>
+                                    <th>Date</th>
+                                    <th>Size / Format</th>
+                                    <th style="text-align:right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="documentsTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB 3: PAGES -->
+                <section id="tab-pages" class="admin-tab">
+                    <div class="tab-header">
+                        <div>
+                            <h2>Page & Article Management</h2>
+                            <p>Create and edit custom articles, announcements, guidelines, and resource pages.</p>
+                        </div>
+                        <button class="btn" onclick="openPageModal()"><i class='bx bx-plus-circle'></i> Create New Page</button>
+                    </div>
+
+                    <div class="admin-card table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Page Title</th>
+                                    <th>Slug / URL</th>
+                                    <th>Category</th>
+                                    <th>Author</th>
+                                    <th>Published Date</th>
+                                    <th style="text-align:right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pagesTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB 4: SETTINGS & BACKUP -->
+                <section id="tab-settings" class="admin-tab">
+                    <div class="tab-header">
+                        <div>
+                            <h2>System Settings & Data Sync</h2>
+                            <p>Manage administrator credentials, export full backups, and synchronize files.</p>
+                        </div>
+                    </div>
+
+                    <div class="admin-two-col">
+                        <!-- Change Password Card -->
+                        <div class="admin-card">
+                            <div class="card-header">
+                                <h3><i class='bx bx-lock-alt'></i> Change Admin Password</h3>
+                            </div>
+                            <form onsubmit="handleChangePassword(event)" class="settings-form">
+                                <div class="auth-group">
+                                    <label>Current Password</label>
+                                    <input type="password" id="currentPass" required placeholder="Enter current password">
+                                </div>
+                                <div class="auth-group">
+                                    <label>New Password</label>
+                                    <input type="password" id="newPass" required placeholder="At least 4 characters">
+                                </div>
+                                <div class="auth-group">
+                                    <label>Confirm New Password</label>
+                                    <input type="password" id="confirmNewPass" required placeholder="Repeat new password">
+                                </div>
+                                <button type="submit" class="btn"><i class='bx bx-save'></i> Update Password</button>
+                            </form>
+                        </div>
+
+                        <!-- Data Backup & Restore Card -->
+                        <div class="admin-card">
+                            <div class="card-header">
+                                <h3><i class='bx bx-data'></i> Data Backup & Synchronization</h3>
+                            </div>
+                            <p style="font-size:1.4rem;color:#666;margin-bottom:1.5rem;">
+                                Download your complete website data (all documents & pages) as a JSON backup file or restore previously saved data.
+                            </p>
+                            
+                            <div style="display:flex;flex-direction:column;gap:1.2rem;">
+                                <button class="btn" onclick="CMS.exportData()">
+                                    <i class='bx bx-download'></i> Download Data Backup (JSON)
+                                </button>
+
+                                <label class="btn btn-outline" style="cursor:pointer;text-align:center;">
+                                    <i class='bx bx-upload'></i> Restore from Backup (JSON)
+                                    <input type="file" id="importJsonInput" accept=".json" style="display:none;" onchange="handleImportBackup(this)">
+                                </label>
+
+                                <hr style="margin:0.8rem 0;border:none;border-top:1px solid #eee;">
+
+                                <button class="btn btn-danger" onclick="handleResetDemoData()">
+                                    <i class='bx bx-reset'></i> Reset to Default Sample Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: ADD / EDIT DOCUMENT -->
+    <div id="docModal" class="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="docModalTitle">Upload New Document</h3>
+                <button class="modal-close" onclick="closeDocModal()">&times;</button>
+            </div>
+            <form id="docForm" onsubmit="handleSaveDocument(event)">
+                <div class="auth-group">
+                    <label>Document Title *</label>
+                    <input type="text" id="docTitle" required placeholder="e.g. Class 10 Science Practice Set 1">
+                </div>
+
+                <div class="form-row-2">
+                    <div class="auth-group">
+                        <label>Category / Subject *</label>
+                        <select id="docCategory" required>
+                            <option value="Science">Science</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Nepali">Nepali</option>
+                            <option value="English">English</option>
+                            <option value="Notice">School Notice</option>
+                            <option value="General">General Resource</option>
+                        </select>
+                    </div>
+
+                    <div class="auth-group">
+                        <label>Grade / Target Level</label>
+                        <input type="text" id="docGrade" placeholder="e.g. Class 10, Class 9, All" value="Class 10">
+                    </div>
+                </div>
+
+                <div class="auth-group">
+                    <label>Upload Document File (PDF, Word, PPT, Image)</label>
+                    <input type="file" id="docFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png">
+                    <small style="color:#666;display:block;margin-top:0.4rem;">Files under 10MB are stored directly in your browser storage.</small>
+                </div>
+
+                <div class="auth-group">
+                    <label>OR External Document Link (Google Drive / Dropbox / Website URL)</label>
+                    <input type="url" id="docExternalUrl" placeholder="https://drive.google.com/file/d/...">
+                </div>
+
+                <div class="auth-group">
+                    <label>Description / Notes for Students</label>
+                    <textarea id="docDescription" rows="3" placeholder="Brief summary of what this document covers..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeDocModal()">Cancel</button>
+                    <button type="submit" class="btn"><i class='bx bx-check'></i> Save Document</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT PAGE -->
+    <div id="pageModal" class="admin-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="pageModalTitle">Create New Page</h3>
+                <button class="modal-close" onclick="closePageModal()">&times;</button>
+            </div>
+            <form id="pageForm" onsubmit="handleSavePage(event)">
+                <input type="hidden" id="editingPageId">
+
+                <div class="auth-group">
+                    <label>Page Title *</label>
+                    <input type="text" id="pageTitle" required placeholder="e.g. Annual Science Exhibition 2026" oninput="autoGenerateSlug(this.value)">
+                </div>
+
+                <div class="form-row-2">
+                    <div class="auth-group">
+                        <label>Page URL Slug *</label>
+                        <input type="text" id="pageSlug" required placeholder="e.g. annual-science-exhibition-2026">
+                        <small style="color:#666;">Viewable at: <code>page.html?id=<span id="slugPreview">slug</span></code></small>
+                    </div>
+
+                    <div class="auth-group">
+                        <label>Category</label>
+                        <select id="pageCategory">
+                            <option value="General">General</option>
+                            <option value="Academics">Academics</option>
+                            <option value="Guidance">Exam Guidance</option>
+                            <option value="Notice">Announcement</option>
+                            <option value="Event">School Event</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="auth-group">
+                    <label>Subtitle / Summary</label>
+                    <input type="text" id="pageSubtitle" placeholder="A short introduction or subtitle for the page">
+                </div>
+
+                <div class="auth-group">
+                    <label>Author Name</label>
+                    <input type="text" id="pageAuthor" value="Shukdev Dhakal">
+                </div>
+
+                <div class="auth-group">
+                    <label>Page Content (HTML / Rich Text)</label>
+                    <div class="editor-toolbar">
+                        <button type="button" onclick="formatContent('h2')"><b>H2</b></button>
+                        <button type="button" onclick="formatContent('h3')"><b>H3</b></button>
+                        <button type="button" onclick="formatContent('p')">&para; P</button>
+                        <button type="button" onclick="formatContent('b')"><b>B</b></button>
+                        <button type="button" onclick="formatContent('i')"><i>I</i></button>
+                        <button type="button" onclick="formatContent('ul')">&bull; List</button>
+                        <button type="button" onclick="formatContent('quote')">&ldquo; Quote</button>
+                        <button type="button" onclick="formatContent('link')">&#128279; Link</button>
+                    </div>
+                    <textarea id="pageContent" rows="10" placeholder="Type page content here. HTML tags like <p>, <h3>, <ul>, <li>, <strong> are supported." required></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closePageModal()">Cancel</button>
+                    <button type="submit" class="btn"><i class='bx bx-check'></i> Save & Publish Page</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshDashboard();
+        });
+
+        function toggleSidebar() {
+            document.getElementById('adminSidebar').classList.toggle('active');
+        }
+
+        function showNotice(msg, type = 'success') {
+            const el = document.getElementById('adminNotice');
+            el.className = 'admin-notice ' + type;
+            el.innerHTML = `<i class='bx ${type === 'success' ? 'bx-check-circle' : 'bx-error-circle'}'></i> ` + msg;
+            el.style.display = 'block';
+            setTimeout(() => {
+                el.style.display = 'none';
+            }, 4000);
+        }
+
+        function switchTab(tabId, navLink) {
+            document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
+            const target = document.getElementById('tab-' + tabId);
+            if (target) target.classList.add('active');
+
+            document.querySelectorAll('.admin-nav-item').forEach(link => link.classList.remove('active'));
+            if (navLink) {
+                navLink.classList.add('active');
+            } else {
+                const found = document.querySelector(`.admin-nav a[href="#${tabId}"]`);
+                if (found) found.classList.add('active');
+            }
+
+            const titleMap = {
+                overview: 'Dashboard Overview',
+                documents: 'Document Management',
+                pages: 'Pages & Articles Management',
+                settings: 'Settings & Data Sync'
+            };
+            document.getElementById('topbarTitle').innerText = titleMap[tabId] || 'Dashboard';
+
+            // Close mobile sidebar if open
+            document.getElementById('adminSidebar').classList.remove('active');
+
+            if (tabId === 'documents') renderDocumentsTable();
+            if (tabId === 'pages') renderPagesTable();
+        }
+
+        function refreshDashboard() {
+            const docs = CMS.getDocuments();
+            const pages = CMS.getPages();
+
+            document.getElementById('statDocCount').innerText = docs.length;
+            document.getElementById('statPageCount').innerText = pages.length;
+            document.getElementById('sidebarDocCount').innerText = docs.length;
+            document.getElementById('sidebarPageCount').innerText = pages.length;
+
+            renderOverviewLists(docs, pages);
+            renderDocumentsTable();
+            renderPagesTable();
+        }
+
+        function renderOverviewLists(docs, pages) {
+            const docListEl = document.getElementById('overviewDocsList');
+            if (docs.length === 0) {
+                docListEl.innerHTML = '<p class="empty-msg">No documents uploaded yet.</p>';
+            } else {
+                docListEl.innerHTML = docs.slice(0, 4).map(d => `
+                    <div class="card-list-item">
+                        <div class="item-icon"><i class='bx bx-file-blank'></i></div>
+                        <div class="item-info">
+                            <h4>${escapeHtml(d.title)}</h4>
+                            <p>${escapeHtml(d.category)} &bull; ${escapeHtml(d.grade || 'All')} &bull; ${d.uploadDate}</p>
+                        </div>
+                        <div class="item-action">
+                            <button class="btn-icon" title="Delete" onclick="deleteDoc('${d.id}')"><i class='bx bx-trash'></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const pageListEl = document.getElementById('overviewPagesList');
+            if (pages.length === 0) {
+                pageListEl.innerHTML = '<p class="empty-msg">No custom pages created yet.</p>';
+            } else {
+                pageListEl.innerHTML = pages.slice(0, 4).map(p => `
+                    <div class="card-list-item">
+                        <div class="item-icon"><i class='bx bx-news'></i></div>
+                        <div class="item-info">
+                            <h4>${escapeHtml(p.title)}</h4>
+                            <p>${escapeHtml(p.category)} &bull; ${p.publishedDate}</p>
+                        </div>
+                        <div class="item-action">
+                            <a href="page.html?id=${encodeURIComponent(p.slug || p.id)}" target="_blank" class="btn-icon" title="View"><i class='bx bx-link-external'></i></a>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function renderDocumentsTable() {
+            const search = (document.getElementById('docSearch').value || '').toLowerCase();
+            const cat = document.getElementById('docCategoryFilter').value;
+            let docs = CMS.getDocuments();
+
+            if (cat !== 'All') {
+                docs = docs.filter(d => d.category === cat);
+            }
+            if (search) {
+                docs = docs.filter(d => 
+                    d.title.toLowerCase().includes(search) || 
+                    (d.description && d.description.toLowerCase().includes(search)) ||
+                    (d.grade && d.grade.toLowerCase().includes(search))
+                );
+            }
+
+            const tbody = document.getElementById('documentsTableBody');
+            if (docs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2.5rem;color:#777;">No documents found. Click 'Upload Document' to add one.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = docs.map(d => {
+                const targetUrl = d.fileData ? d.fileData : (d.externalUrl || '#');
+                const hasFile = Boolean(d.fileData || d.externalUrl);
+                return `
+                <tr>
+                    <td>
+                        <div style="font-weight:600;font-size:1.45rem;color:#111;">${escapeHtml(d.title)}</div>
+                        <small style="color:#666;">${escapeHtml(d.description || '')}</small>
+                    </td>
+                    <td><span class="category-pill">${escapeHtml(d.category)}</span></td>
+                    <td>${escapeHtml(d.grade || 'All')}</td>
+                    <td>${d.uploadDate || 'N/A'}</td>
+                    <td><small>${escapeHtml(d.fileSize || 'N/A')}</small></td>
+                    <td style="text-align:right;">
+                        <div class="action-buttons">
+                            ${hasFile ? `<a href="${targetUrl}" target="_blank" ${d.fileData ? `download="${escapeHtml(d.fileName)}"` : ''} class="btn-table" title="Download / View"><i class='bx bx-download'></i></a>` : ''}
+                            <button type="button" class="btn-table" title="Copy Info" onclick="copyDocInfo('${escapeHtml(d.title)}')"><i class='bx bx-copy'></i></button>
+                            <button type="button" class="btn-table danger" title="Delete" onclick="deleteDoc('${d.id}')"><i class='bx bx-trash'></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        function renderPagesTable() {
+            const pages = CMS.getPages();
+            const tbody = document.getElementById('pagesTableBody');
+            if (pages.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2.5rem;color:#777;">No custom pages yet. Click 'Create New Page' above.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = pages.map(p => `
+                <tr>
+                    <td>
+                        <div style="font-weight:600;font-size:1.45rem;color:#111;">${escapeHtml(p.title)}</div>
+                        <small style="color:#666;">${escapeHtml(p.subtitle || '')}</small>
+                    </td>
+                    <td><code>${escapeHtml(p.slug || p.id)}</code></td>
+                    <td><span class="category-pill">${escapeHtml(p.category || 'General')}</span></td>
+                    <td>${escapeHtml(p.author || 'Shukdev Dhakal')}</td>
+                    <td>${p.publishedDate || 'N/A'}</td>
+                    <td style="text-align:right;">
+                        <div class="action-buttons">
+                            <a href="page.html?id=${encodeURIComponent(p.slug || p.id)}" target="_blank" class="btn-table" title="View Live"><i class='bx bx-link-external'></i></a>
+                            <button type="button" class="btn-table" title="Edit" onclick="editPage('${p.id}')"><i class='bx bx-edit'></i></button>
+                            <button type="button" class="btn-table" title="Download Static HTML" onclick="downloadPageHTML('${p.id}')"><i class='bx bx-download'></i></button>
+                            <button type="button" class="btn-table danger" title="Delete" onclick="deletePage('${p.id}')"><i class='bx bx-trash'></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // --- Document Handlers ---
+        function openDocModal() {
+            document.getElementById('docForm').reset();
+            document.getElementById('docModal').classList.add('active');
+        }
+
+        function closeDocModal() {
+            document.getElementById('docModal').classList.remove('active');
+        }
+
+        function handleSaveDocument(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('docFileInput');
+            const file = fileInput.files[0];
+
+            const title = document.getElementById('docTitle').value;
+            const category = document.getElementById('docCategory').value;
+            const grade = document.getElementById('docGrade').value;
+            const extUrl = document.getElementById('docExternalUrl').value;
+            const desc = document.getElementById('docDescription').value;
+
+            function finish(fileData, fileName, fileType, fileSize) {
+                CMS.addDocument({
+                    title: title,
+                    category: category,
+                    grade: grade,
+                    externalUrl: extUrl,
+                    description: desc,
+                    fileData: fileData || '',
+                    fileName: fileName || (file ? file.name : 'resource.pdf'),
+                    fileType: fileType || (file ? file.type : 'application/pdf'),
+                    fileSize: fileSize || (file ? formatBytes(file.size) : 'External Link')
+                });
+                closeDocModal();
+                refreshDashboard();
+                showNotice('Document uploaded and published successfully!');
+            }
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    finish(event.target.result, file.name, file.type, formatBytes(file.size));
+                };
+                reader.readAsDataURL(file);
+            } else {
+                finish('', '', '', extUrl ? 'External Link' : 'Information sheet');
+            }
+        }
+
+        function deleteDoc(id) {
+            if (confirm('Are you sure you want to delete this document?')) {
+                CMS.deleteDocument(id);
+                refreshDashboard();
+                showNotice('Document removed.');
+            }
+        }
+
+        function copyDocInfo(title) {
+            navigator.clipboard.writeText(title);
+            showNotice('Copied: "' + title + '" to clipboard!');
+        }
+
+        // --- Page Handlers ---
+        function openPageModal() {
+            document.getElementById('pageForm').reset();
+            document.getElementById('editingPageId').value = '';
+            document.getElementById('pageModalTitle').innerText = 'Create New Page';
+            document.getElementById('slugPreview').innerText = 'slug';
+            document.getElementById('pageModal').classList.add('active');
+        }
+
+        function closePageModal() {
+            document.getElementById('pageModal').classList.remove('active');
+        }
+
+        function autoGenerateSlug(title) {
+            const slug = title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+            document.getElementById('pageSlug').value = slug;
+            document.getElementById('slugPreview').innerText = slug || 'slug';
+        }
+
+        function editPage(id) {
+            const page = CMS.getPageBySlugOrId(id);
+            if (!page) return;
+            document.getElementById('editingPageId').value = page.id;
+            document.getElementById('pageTitle').value = page.title;
+            document.getElementById('pageSlug').value = page.slug;
+            document.getElementById('slugPreview').innerText = page.slug;
+            document.getElementById('pageCategory').value = page.category || 'General';
+            document.getElementById('pageSubtitle').value = page.subtitle || '';
+            document.getElementById('pageAuthor').value = page.author || 'Shukdev Dhakal';
+            document.getElementById('pageContent').value = page.content || '';
+            document.getElementById('pageModalTitle').innerText = 'Edit Page: ' + page.title;
+            document.getElementById('pageModal').classList.add('active');
+        }
+
+        function handleSavePage(e) {
+            e.preventDefault();
+            const id = document.getElementById('editingPageId').value;
+            const title = document.getElementById('pageTitle').value;
+            const slug = document.getElementById('pageSlug').value;
+            const category = document.getElementById('pageCategory').value;
+            const subtitle = document.getElementById('pageSubtitle').value;
+            const author = document.getElementById('pageAuthor').value;
+            const content = document.getElementById('pageContent').value;
+
+            CMS.savePage({
+                id: id || undefined,
+                title: title,
+                slug: slug,
+                category: category,
+                subtitle: subtitle,
+                author: author,
+                content: content
+            });
+
+            closePageModal();
+            refreshDashboard();
+            showNotice(id ? 'Page updated successfully!' : 'New page created and published!');
+        }
+
+        function deletePage(id) {
+            if (confirm('Are you sure you want to delete this page?')) {
+                CMS.deletePage(id);
+                refreshDashboard();
+                showNotice('Page deleted.');
+            }
+        }
+
+        function downloadPageHTML(id) {
+            const page = CMS.getPageBySlugOrId(id);
+            if (!page) return;
+            const html = CMS.generateStaticHTML(page);
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = (page.slug || 'page') + '.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showNotice('Downloaded static HTML for "' + page.title + '"!');
+        }
+
+        function formatContent(tag) {
+            const textarea = document.getElementById('pageContent');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selected = textarea.value.substring(start, end) || 'Sample text';
+
+            let replacement = '';
+            if (tag === 'h2') replacement = `<h2>${selected}</h2>`;
+            else if (tag === 'h3') replacement = `<h3>${selected}</h3>`;
+            else if (tag === 'p') replacement = `<p>${selected}</p>`;
+            else if (tag === 'b') replacement = `<strong>${selected}</strong>`;
+            else if (tag === 'i') replacement = `<em>${selected}</em>`;
+            else if (tag === 'ul') replacement = `<ul>\n  <li>${selected}</li>\n  <li>Additional point</li>\n</ul>`;
+            else if (tag === 'quote') replacement = `<blockquote>"${selected}"</blockquote>`;
+            else if (tag === 'link') replacement = `<a href="https://example.com" target="_blank">${selected}</a>`;
+
+            textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+            textarea.focus();
+        }
+
+        // --- Settings & Auth ---
+        function handleChangePassword(e) {
+            e.preventDefault();
+            const cur = document.getElementById('currentPass').value;
+            const nw = document.getElementById('newPass').value;
+            const conf = document.getElementById('confirmNewPass').value;
+
+            if (nw !== conf) {
+                showNotice('New passwords do not match!', 'error');
+                return;
+            }
+
+            const res = CMS.changePassword(cur, nw);
+            if (res.success) {
+                showNotice(res.message);
+                e.target.reset();
+            } else {
+                showNotice(res.message, 'error');
+            }
+        }
+
+        function handleImportBackup(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const res = CMS.importData(e.target.result);
+                if (res.success) {
+                    showNotice('Backup restored successfully!');
+                    refreshDashboard();
+                } else {
+                    showNotice(res.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function handleResetDemoData() {
+            if (confirm('This will restore default sample documents and pages. Continue?')) {
+                CMS.resetToDefault();
+                refreshDashboard();
+                showNotice('Restored default demo data.');
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to log out?')) {
+                CMS.logout();
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Utilities
+        function formatBytes(bytes) {
+            if (!bytes || bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+
+</html>

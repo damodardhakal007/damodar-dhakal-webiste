@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+    <title>Educational Documents & Resources - Shukdev Dhakal</title>
+</head>
+
+<body>
+    <!-- HEADER SECTION -->
+    <header class="header">
+        <a href="index.html#home" class="logo">Shukdev dhakal</a>
+        <i class='bx bx-menu' id="menu-icon"></i>
+        <nav class="navbar">
+            <a href="index.html#home">Home</a>
+            <a href="about.html">About</a>
+            <a href="documents.html" class="active">Documents</a>
+            <a href="contact-me.html">Contact Me</a>
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <a href="login.html" class="nav-login-btn"><i class='bx bx-user'></i> Login</a>
+        </nav>
+    </header>
+
+    <!-- DOCUMENTS SECTION -->
+    <section class="content-section docs-page-section">
+        <div class="docs-hero">
+            <h2 class="heading">Educational <span>Documents</span></h2>
+            <h3>Free study notes, exam model sets, and teaching materials by Shukdev Dhakal</h3>
+            <p>
+                Browse, search, and download curriculum-aligned study resources for Secondary Education Examination (SEE) and school studies. All files are free for students and educators.
+            </p>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="docs-toolbar">
+            <div class="search-box">
+                <i class='bx bx-search'></i>
+                <input type="text" id="docSearchInput" placeholder="Search by topic, subject, or class (e.g. Science, Math, SEE)..." oninput="filterDocuments()">
+            </div>
+
+            <div class="category-pills" id="categoryPills">
+                <button class="pill active" onclick="setCategoryFilter('All', this)">All</button>
+                <button class="pill" onclick="setCategoryFilter('Science', this)">Science</button>
+                <button class="pill" onclick="setCategoryFilter('Mathematics', this)">Mathematics</button>
+                <button class="pill" onclick="setCategoryFilter('Nepali', this)">Nepali</button>
+                <button class="pill" onclick="setCategoryFilter('English', this)">English</button>
+                <button class="pill" onclick="setCategoryFilter('Notice', this)">Notices</button>
+            </div>
+        </div>
+
+        <!-- Document Cards Grid -->
+        <div class="docs-grid" id="docsGridContainer">
+            <!-- Dynamically populated -->
+        </div>
+
+        <!-- Admin Callout Box -->
+        <div class="admin-callout">
+            <div class="callout-icon">
+                <i class='bx bx-shield-quarter'></i>
+            </div>
+            <div class="callout-text">
+                <h4>Teacher & Admin Access</h4>
+                <p>Are you Shukdev Dhakal or an authorized educator? Log in to upload new notes, model sets, or create custom pages.</p>
+            </div>
+            <a href="login.html" class="btn"><i class='bx bx-log-in'></i> Admin Login</a>
+        </div>
+    </section>
+
+    <!-- FOOTER SECTION -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="documents.html">Documents</a>
+            <a href="contact-me.html">Contact</a>
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <a href="privacy-policy-daure.html">Privacy - Daure</a>
+            <a href="terms.html">Terms & Agreement</a>
+            <a href="login.html">Admin Login</a>
+        </div>
+        <div class="social">
+            <a href="https://www.facebook.com/shukdev.dhakal.3" target="_blank"><i class='bx bxl-facebook'></i></a>
+            <a href="https://instagram.com/shukdevdhakal007" target="_blank"><i class='bx bxl-instagram'></i></a>
+            <a href="https://play.google.com/store/apps/details?id=com.bank.damodardhakal&hl=ne" target="_blank"><i class='bx bxl-play-store'></i></a>
+        </div>
+        <p class="copyright">© Damodar Dhakal - All Rights Reserved</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="cms.js"></script>
+    <script>
+        let currentCategory = 'All';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderDocuments();
+        });
+
+        function setCategoryFilter(cat, btn) {
+            currentCategory = cat;
+            document.querySelectorAll('#categoryPills .pill').forEach(p => p.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderDocuments();
+        }
+
+        function filterDocuments() {
+            renderDocuments();
+        }
+
+        function renderDocuments() {
+            const container = document.getElementById('docsGridContainer');
+            const search = (document.getElementById('docSearchInput').value || '').toLowerCase();
+            let docs = CMS.getDocuments();
+
+            if (currentCategory !== 'All') {
+                docs = docs.filter(d => d.category === currentCategory);
+            }
+
+            if (search) {
+                docs = docs.filter(d =>
+                    d.title.toLowerCase().includes(search) ||
+                    (d.description && d.description.toLowerCase().includes(search)) ||
+                    (d.grade && d.grade.toLowerCase().includes(search)) ||
+                    (d.category && d.category.toLowerCase().includes(search))
+                );
+            }
+
+            if (docs.length === 0) {
+                container.innerHTML = `
+                    <div class="no-docs-message">
+                        <i class='bx bx-folder-open'></i>
+                        <h3>No documents found</h3>
+                        <p>Try searching for a different keyword or select another subject.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = docs.map(d => {
+                const targetUrl = d.fileData ? d.fileData : (d.externalUrl || '#');
+                const hasFile = Boolean(d.fileData || d.externalUrl);
+                const isDownloadable = Boolean(d.fileData);
+
+                // Determine icon based on category or file
+                let iconClass = 'bxs-file-pdf';
+                if (d.category === 'Mathematics') iconClass = 'bx-calculator';
+                else if (d.category === 'Science') iconClass = 'bx-atom';
+                else if (d.category === 'Nepali' || d.category === 'English') iconClass = 'bx-book-open';
+                else if (d.category === 'Notice') iconClass = 'bx-bell';
+
+                return `
+                    <div class="doc-card">
+                        <div class="doc-card-top">
+                            <div class="doc-icon"><i class='bx ${iconClass}'></i></div>
+                            <span class="doc-badge">${escapeHtml(d.category)}</span>
+                        </div>
+                        <h4 class="doc-title">${escapeHtml(d.title)}</h4>
+                        <p class="doc-grade"><i class='bx bx-user-pin'></i> ${escapeHtml(d.grade || 'All Classes')}</p>
+                        <p class="doc-desc">${escapeHtml(d.description || 'Download for study notes and reference.')}</p>
+                        <div class="doc-meta">
+                            <span><i class='bx bx-time'></i> ${d.uploadDate || 'Recent'}</span>
+                            <span><i class='bx bx-hdd'></i> ${escapeHtml(d.fileSize || 'Standard')}</span>
+                        </div>
+                        <div class="doc-actions">
+                            ${hasFile ? `
+                                <a href="${targetUrl}" target="_blank" ${isDownloadable ? `download="${escapeHtml(d.fileName)}"` : ''} class="btn btn-doc">
+                                    <i class='bx bx-download'></i> ${isDownloadable ? 'Download File' : 'Open Link'}
+                                </a>
+                            ` : `
+                                <button class="btn btn-doc disabled" disabled>Available Soon</button>
+                            `}
+                            <button type="button" class="btn-share" title="Share Document" onclick="shareDoc('${escapeHtml(d.title)}')">
+                                <i class='bx bx-share-alt'></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function shareDoc(title) {
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    text: 'Check out this educational document: ' + title,
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Page link copied to clipboard!');
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+
+</html>
